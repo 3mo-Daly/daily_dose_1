@@ -41,6 +41,12 @@ class Medicine extends HiveObject {
   @HiveField(11)
   final List<DateTime> deletedOccurrences;
 
+  @HiveField(12)
+  final DateTime? hideBefore;
+
+  @HiveField(13)
+  final DateTime? hideAfter;
+
   // Transient property for UI state (not persisted)
   final bool isTaken;
 
@@ -57,6 +63,8 @@ class Medicine extends HiveObject {
     this.durationDays,
     List<DateTime>? history,
     List<DateTime>? deletedOccurrences,
+    this.hideBefore,
+    this.hideAfter,
     this.isTaken = false,
   })  : history = history ?? [],
         deletedOccurrences = deletedOccurrences ?? [];
@@ -74,6 +82,8 @@ class Medicine extends HiveObject {
     int? durationDays,
     List<DateTime>? history,
     List<DateTime>? deletedOccurrences,
+    DateTime? hideBefore,
+    DateTime? hideAfter,
     bool? isTaken,
   }) {
     return Medicine(
@@ -89,6 +99,8 @@ class Medicine extends HiveObject {
       durationDays: durationDays ?? this.durationDays,
       history: history ?? this.history,
       deletedOccurrences: deletedOccurrences ?? this.deletedOccurrences,
+      hideBefore: hideBefore ?? this.hideBefore,
+      hideAfter: hideAfter ?? this.hideAfter,
       isTaken: isTaken ?? this.isTaken,
     );
   }

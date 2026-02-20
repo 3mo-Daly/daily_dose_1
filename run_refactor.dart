@@ -1,13 +1,21 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import '../../../models/medicine_model.dart';
-import 'home_state.dart';
+import 'dart:io';
 
-class HomeCubit extends Cubit<HomeState> {
-  final Box<Medicine> medicineBox;
-
-  HomeCubit({required this.medicineBox}) : super(HomeInitial());
-
+void main() {
+  final file = File('lib/features/home/cubit/home_cubit.dart');
+  String content = file.readAsStringSync();
+  
+  // Find start of loadMedicines
+  int startIdx = content.indexOf('  void loadMedicines(String profileId, DateTime date, {bool showAll = false}) {');
+  
+  // Find end of loadMedicines
+  int endIdx = content.indexOf('  Future<void> markAsTaken(Medicine medicine) async {');
+  
+  if (startIdx == -1 || endIdx == -1) {
+     print('Could not find indices');
+     return;
+  }
+  
+  String newLoadMedicines = '''
   void loadMedicines(String profileId, DateTime date, {bool showAll = false}) {
     emit(HomeLoading());
     try {
@@ -158,107 +166,9 @@ class HomeCubit extends Cubit<HomeState> {
     return results;
   }
 
-  Future<void> markAsTaken(Medicine medicine) async {
-    // We don't delete the medicine, just upate history. 
-    // The UI will refresh and filter it out.
-    // However, if we want to "Delete" it from view, we must ensure loadMedicines is called after.
-    // The 'medicine' parameter here is a dynamically generated copy (with specific startTime).
-    // We must find the REAL medicine from the Box to save it.
-    
-    final realMedicine = medicineBox.values.firstWhere((m) => m.id == medicine.id);
-    
-    // We need to save to Hive.
-    realMedicine.history.add(DateTime.now());
-    await realMedicine.save();
-    
-    // Refresh list
-    // We need current state to know profile and date
-    if (state is HomeLoaded) {
-      final cur = state as HomeLoaded;
-      loadMedicines(cur.profileId, cur.selectedDate);
-    }
-  }
+''';
 
-  Future<void> deleteMedicine(String id) async {
-     await medicineBox.delete(id);
-     // Refresh
-     if (state is HomeLoaded) {
-      final cur = state as HomeLoaded;
-      loadMedicines(cur.profileId, cur.selectedDate);
-    }
-  }
-
-  Future<void> deleteMedicines(List<String> rawKeysOrIds) async {
-    // The keys from the multi-select UI are now composite: "medicineId|ISO8601String"
-    // To support backward compatibility if it's just an "id", we parse safely.
-    for (var key in rawKeysOrIds) {
-      final parts = key.split('|');
-      final medId = parts[0];
-
-      try {
-        final realMedicine = medicineBox.values.firstWhere((m) => m.id == medId);
-
-        if (parts.length > 1) {
-          // It's a specific occurrence deletion
-          final specificTime = DateTime.parse(parts[1]);
-          realMedicine.deletedOccurrences.add(specificTime);
-          await realMedicine.save();
-        } else {
-           // It's a full deletion 
-           await realMedicine.delete();
-        }
-      } catch (e) {
-        // Medicine not found, skip
-      }
-    }
-
-    // Refresh
-    if (state is HomeLoaded) {
-      final cur = state as HomeLoaded;
-      loadMedicines(cur.profileId, cur.selectedDate);
-    }
-  }
-
-  Future<void> deleteAllMedicines(String profileId) async {
-     final keysToDelete = medicineBox.values
-        .where((m) => m.profileId == profileId)
-        .map((m) => m.key)
-        .toList();
-     
-     await medicineBox.deleteAll(keysToDelete);
-     
-     if (state is HomeLoaded) {
-      final cur = state as HomeLoaded;
-      loadMedicines(cur.profileId, cur.selectedDate);
-     }
-  }
-
-  Future<void> updateMedicineScope(String medicineId, {DateTime? hideBefore, DateTime? hideAfter}) async {
-    try {
-      final realMedicine = medicineBox.values.firstWhere((m) => m.id == medicineId);
-      
-      // We apply the bounds if they were passed in
-      DateTime? updatedHideBefore = realMedicine.hideBefore;
-      if (hideBefore != null) {
-         updatedHideBefore = hideBefore;
-      }
-      
-      DateTime? updatedHideAfter = realMedicine.hideAfter;
-      if (hideAfter != null) {
-         updatedHideAfter = hideAfter;
-      }
-
-      await medicineBox.put(realMedicine.key, realMedicine.copyWith(
-         hideBefore: updatedHideBefore,
-         hideAfter: updatedHideAfter,
-      ));
-
-      if (state is HomeLoaded) {
-        final cur = state as HomeLoaded;
-        loadMedicines(cur.profileId, cur.selectedDate);
-      }
-    } catch (e) {
-      // Not found, ignore
-    }
-  }
+  content = content.replaceRange(startIdx, endIdx, newLoadMedicines);
+  file.writeAsStringSync(content);
+  print('Successfully refactored home_cubit.dart');
 }

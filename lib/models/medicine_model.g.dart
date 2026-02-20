@@ -29,13 +29,15 @@ class MedicineAdapter extends TypeAdapter<Medicine> {
       durationDays: fields[10] as int?,
       history: (fields[9] as List?)?.cast<DateTime>(),
       deletedOccurrences: (fields[11] as List?)?.cast<DateTime>(),
+      hideBefore: fields[12] as DateTime?,
+      hideAfter: fields[13] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Medicine obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -59,7 +61,11 @@ class MedicineAdapter extends TypeAdapter<Medicine> {
       ..writeByte(9)
       ..write(obj.history)
       ..writeByte(11)
-      ..write(obj.deletedOccurrences);
+      ..write(obj.deletedOccurrences)
+      ..writeByte(12)
+      ..write(obj.hideBefore)
+      ..writeByte(13)
+      ..write(obj.hideAfter);
   }
 
   @override

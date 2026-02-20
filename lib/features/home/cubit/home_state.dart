@@ -16,15 +16,17 @@ class HomeLoaded extends HomeState {
   final List<Medicine> medicines;
   final DateTime selectedDate;
   final String profileId;
+  final bool isShowingAll;
 
   const HomeLoaded({
     required this.medicines,
     required this.selectedDate,
     required this.profileId,
+    this.isShowingAll = false,
   });
 
   @override
-  List<Object?> get props => [medicines, selectedDate, profileId];
+  List<Object?> get props => [medicines, selectedDate, profileId, isShowingAll];
 }
 
 class HomeError extends HomeState {
