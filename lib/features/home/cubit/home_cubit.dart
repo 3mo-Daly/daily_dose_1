@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../../models/medicine_model.dart';
+import '../../../core/services/notification_service.dart';
+import '../../../core/utils/notification_util.dart';
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
@@ -181,6 +183,12 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> deleteMedicine(String id) async {
      await medicineBox.delete(id);
+     
+     final notificationId = NotificationUtil.generateId(id);
+     final notificationService = NotificationService();
+     for (int i = 0; i < 50; i++) {
+        notificationService.cancelNotification(notificationId + i);
+     }
      // Refresh
      if (state is HomeLoaded) {
       final cur = state as HomeLoaded;
@@ -189,26 +197,23 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> deleteMedicines(List<String> rawKeysOrIds) async {
-    // The keys from the multi-select UI are now composite: "medicineId|ISO8601String"
-    // To support backward compatibility if it's just an "id", we parse safely.
+    final Set<String> idsToDelete = {};
     for (var key in rawKeysOrIds) {
-      final parts = key.split('|');
-      final medId = parts[0];
-
+      idsToDelete.add(key.split('|')[0]);
+    }
+    
+    for (var medId in idsToDelete) {
       try {
         final realMedicine = medicineBox.values.firstWhere((m) => m.id == medId);
+        await realMedicine.delete();
 
-        if (parts.length > 1) {
-          // It's a specific occurrence deletion
-          final specificTime = DateTime.parse(parts[1]);
-          realMedicine.deletedOccurrences.add(specificTime);
-          await realMedicine.save();
-        } else {
-           // It's a full deletion 
-           await realMedicine.delete();
+        final notificationId = NotificationUtil.generateId(medId);
+        final notificationService = NotificationService();
+        for (int i = 0; i < 50; i++) {
+           notificationService.cancelNotification(notificationId + i);
         }
       } catch (e) {
-        // Medicine not found, skip
+        // skip if not found
       }
     }
 
@@ -220,11 +225,19 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> deleteAllMedicines(String profileId) async {
-     final keysToDelete = medicineBox.values
+     final medicinesToDelete = medicineBox.values
         .where((m) => m.profileId == profileId)
+        .toList();
+     final keysToDelete = medicinesToDelete
         .map((m) => m.key)
         .toList();
-     
+     final notificationService = NotificationService();
+     for (final medicine in medicinesToDelete) {
+         final notificationId = NotificationUtil.generateId(medicine.id);
+         for (int i = 0; i < 50; i++) {
+             notificationService.cancelNotification(notificationId + i);
+         }
+     }
      await medicineBox.deleteAll(keysToDelete);
      
      if (state is HomeLoaded) {

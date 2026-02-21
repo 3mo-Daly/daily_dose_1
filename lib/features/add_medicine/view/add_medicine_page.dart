@@ -8,7 +8,8 @@ import '../cubit/add_medicine_state.dart';
 
 class AddMedicinePage extends StatefulWidget {
   final String profileId;
-  const AddMedicinePage({super.key, required this.profileId});
+  final String profileName;
+  const AddMedicinePage({super.key, required this.profileId, required this.profileName});
 
   @override
   State<AddMedicinePage> createState() => _AddMedicinePageState();
@@ -169,6 +170,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
     if (_formKey.currentState!.validate()) {
        context.read<AddMedicineCubit>().addMedicine(
          profileId: widget.profileId,
+         profileName: widget.profileName,
          name: _nameController.text,
          dosage: _dosageController.text,
          imagePath: _imagePath,

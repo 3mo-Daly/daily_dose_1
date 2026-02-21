@@ -160,7 +160,8 @@ class _HomePageState extends State<HomePage> {
                       itemCount: state.medicines.length,
                       itemBuilder: (context, index) {
                         final medicine = state.medicines[index];
-                        final cardKey = '${medicine.id}|${medicine.startTime.toIso8601String()}';
+                        final cardKey =
+                            '${medicine.id}|${medicine.startTime.toIso8601String()}';
                         final isSelected = selectedCardKeys.contains(cardKey);
 
                         return MedicineCard(
@@ -210,12 +211,22 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               final profileState = context.read<ProfileCubit>().state;
               final homeState = context.read<HomeCubit>().state;
-              
-              if (profileState is ProfileLoaded && profileState.selectedProfileId != null && homeState is HomeLoaded) {
-                _showAdvancedDeleteOptions(context, profileState.selectedProfileId!, homeState);
+
+              if (profileState is ProfileLoaded &&
+                  profileState.selectedProfileId != null &&
+                  homeState is HomeLoaded) {
+                _showAdvancedDeleteOptions(
+                  context,
+                  profileState.selectedProfileId!,
+                  homeState,
+                );
               } else {
-                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please select a profile or wait for medicines to load first.')),
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Please select a profile or wait for medicines to load first.',
+                    ),
+                  ),
                 );
               }
             },
@@ -228,11 +239,15 @@ class _HomePageState extends State<HomePage> {
               final profileState = context.read<ProfileCubit>().state;
               if (profileState is ProfileLoaded &&
                   profileState.selectedProfileId != null) {
+                final profileName = profileState.profiles
+                    .firstWhere((p) => p.id == profileState.selectedProfileId)
+                    .name;
                 Navigator.of(context)
                     .push(
                       MaterialPageRoute(
                         builder: (_) => AddMedicinePage(
                           profileId: profileState.selectedProfileId!,
+                          profileName: profileName,
                         ),
                       ),
                     )
@@ -252,10 +267,16 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _showAdvancedDeleteOptions(BuildContext context, String profileId, HomeLoaded homeState) {
+  void _showAdvancedDeleteOptions(
+    BuildContext context,
+    String profileId,
+    HomeLoaded homeState,
+  ) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) {
         return SafeArea(
           child: Column(
@@ -263,11 +284,17 @@ class _HomePageState extends State<HomePage> {
             children: [
               const Padding(
                 padding: EdgeInsets.all(16.0),
-                child: Text('Deletion Options', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: Text(
+                  'Deletion Options',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
               ListTile(
                 leading: const Icon(Icons.delete_sweep, color: Colors.red),
-                title: const Text('Delete All Medicines', style: TextStyle(color: Colors.red)),
+                title: const Text(
+                  'Delete All Medicines',
+                  style: TextStyle(color: Colors.red),
+                ),
                 subtitle: const Text('Completely clear this profile.'),
                 onTap: () {
                   Navigator.pop(context); // close bottom sheet
@@ -277,7 +304,9 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 leading: const Icon(Icons.auto_awesome_motion),
                 title: const Text('Delete Specific Medicine'),
-                subtitle: const Text('Choose a medicine and modify its past/future occurrences.'),
+                subtitle: const Text(
+                  'Choose a medicine and modify its past/future occurrences.',
+                ),
                 onTap: () {
                   Navigator.pop(context); // close bottom sheet
                   _showSpecificMedicineSelector(context, homeState);
@@ -296,9 +325,14 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete All Medicines?'),
-        content: const Text('This will permanently delete all medicines for this profile.'),
+        content: const Text(
+          'This will permanently delete all medicines for this profile.',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           TextButton(
             onPressed: () {
               context.read<HomeCubit>().deleteAllMedicines(profileId);
@@ -311,22 +345,29 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _showSpecificMedicineSelector(BuildContext context, HomeLoaded homeState) {
+  void _showSpecificMedicineSelector(
+    BuildContext context,
+    HomeLoaded homeState,
+  ) {
     // Deduplicate the generated medicines to find the underlying unique models
     final uniqueMedicines = <String, Medicine>{};
     for (var m in homeState.medicines) {
-       uniqueMedicines[m.id] ??= m; 
+      uniqueMedicines[m.id] ??= m;
     }
 
     if (uniqueMedicines.isEmpty) {
-       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No active medicines found.')));
-       return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No active medicines found.')),
+      );
+      return;
     }
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) {
         return DraggableScrollableSheet(
           initialChildSize: 0.5,
@@ -334,40 +375,56 @@ class _HomePageState extends State<HomePage> {
           maxChildSize: 0.9,
           expand: false,
           builder: (context, scrollController) {
-             return Column(
-               children: [
-                 const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text('Select Medicine To Delete', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                 ),
-                 Expanded(
-                   child: ListView(
-                     controller: scrollController,
-                     children: uniqueMedicines.values.map((med) {
-                        return ListTile(
-                          title: Text(med.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text(med.dosage),
-                          trailing: const Icon(Icons.chevron_right),
-                          onTap: () {
-                            Navigator.pop(context); // Close selection sheet
-                            _showRepetitionScopeSelector(context, med.id, med.name);
-                          },
-                        );
-                     }).toList(),
-                   ),
-                 ),
-               ],
-             );
-          }
+            return Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'Select Medicine To Delete',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Expanded(
+                  child: ListView(
+                    controller: scrollController,
+                    children: uniqueMedicines.values.map((med) {
+                      return ListTile(
+                        title: Text(
+                          med.name,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(med.dosage),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          Navigator.pop(context); // Close selection sheet
+                          _showRepetitionScopeSelector(
+                            context,
+                            med.id,
+                            med.name,
+                          );
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  void _showRepetitionScopeSelector(BuildContext context, String medicineId, String medicineName) {
+  void _showRepetitionScopeSelector(
+    BuildContext context,
+    String medicineId,
+    String medicineName,
+  ) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) {
         return SafeArea(
           child: Column(
@@ -375,35 +432,57 @@ class _HomePageState extends State<HomePage> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text('Delete Repetitions for $medicineName', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                child: Text(
+                  'Delete Repetitions for $medicineName',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
               ListTile(
                 leading: const Icon(Icons.history),
                 title: const Text('Past Repetitions'),
-                subtitle: const Text('Keep future reminders, but hide all past history.'),
+                subtitle: const Text(
+                  'Keep future reminders, but hide all past history.',
+                ),
                 onTap: () {
-                  context.read<HomeCubit>().updateMedicineScope(medicineId, hideBefore: DateTime.now());
+                  context.read<HomeCubit>().updateMedicineScope(
+                    medicineId,
+                    hideBefore: DateTime.now(),
+                  );
                   Navigator.pop(context);
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.update),
                 title: const Text('Future Repetitions'),
-                subtitle: const Text('Keep past history, but stop all future reminders.'),
+                subtitle: const Text(
+                  'Keep past history, but stop all future reminders.',
+                ),
                 onTap: () {
-                  context.read<HomeCubit>().updateMedicineScope(medicineId, hideAfter: DateTime.now());
+                  context.read<HomeCubit>().updateMedicineScope(
+                    medicineId,
+                    hideAfter: DateTime.now(),
+                  );
                   Navigator.pop(context);
                 },
               ),
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.delete_forever, color: Colors.red),
-                title: const Text('All Repetitions', style: TextStyle(color: Colors.red)),
-                subtitle: const Text('Completely delete this specific medicine entirely.'),
+                title: const Text(
+                  'All Repetitions',
+                  style: TextStyle(color: Colors.red),
+                ),
+                subtitle: const Text(
+                  'Completely delete this specific medicine entirely.',
+                ),
                 onTap: () {
-                   // Full deletion of just this medicine ID
-                   context.read<HomeCubit>().deleteMedicine(medicineId);
-                   Navigator.pop(context);
+                  // Full deletion of just this medicine ID
+                  context.read<HomeCubit>().deleteMedicine(medicineId);
+                  Navigator.pop(context);
                 },
               ),
               const SizedBox(height: 10),
@@ -432,14 +511,14 @@ class _HomePageState extends State<HomePage> {
       selectedDate,
       DateTime.now().add(const Duration(days: 1)),
     );
-    
+
     int selectedSegment = -1;
     if (_isShowingAll) {
-       selectedSegment = 2;
+      selectedSegment = 2;
     } else if (isToday) {
-       selectedSegment = 0;
+      selectedSegment = 0;
     } else if (isTomorrow) {
-       selectedSegment = 1;
+      selectedSegment = 1;
     }
 
     return Padding(

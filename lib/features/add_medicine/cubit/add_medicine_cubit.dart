@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 import '../../../models/medicine_model.dart';
 import '../../../core/services/notification_service.dart';
+import '../../../core/utils/notification_util.dart';
 import 'add_medicine_state.dart';
 
 class AddMedicineCubit extends Cubit<AddMedicineState> {
@@ -16,6 +17,7 @@ class AddMedicineCubit extends Cubit<AddMedicineState> {
 
   Future<void> addMedicine({
     required String profileId,
+    required String profileName,
     required String name,
     required String dosage,
     String? imagePath,
@@ -55,7 +57,7 @@ class AddMedicineCubit extends Cubit<AddMedicineState> {
       // We will wrap in try-catch to not crash the UI flow if notifications fail.
       
       try {
-        final notificationId = id.hashCode;
+        final notificationId = NotificationUtil.generateId(id);
         final initialSchedule = isInterval ? startTime : fixedTime!;
         
         // Calculate end date
@@ -72,8 +74,8 @@ class AddMedicineCubit extends Cubit<AddMedicineState> {
            if (nextTime.isAfter(DateTime.now())) {
               await notificationService.scheduleNotification(
                 id: notificationId + count,
-                title: 'Time for your medicine: $name',
-                body: 'Take $dosage',
+                title: '$profileName: time for your medicine',
+                body: '$name -> take $dosage',
                 scheduledDate: nextTime,
               );
               count++;
