@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../add_medicine/view/add_medicine_page.dart';
@@ -17,16 +18,35 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   DateTime selectedDate = DateTime.now();
   Set<String> selectedCardKeys = {};
   bool _isShowingAll = false;
+  Timer? _refreshTimer;
 
   @override
   void initState() {
     super.initState();
-    // Initial load will be triggered by BlocListener or manually here if needed
-    // But since profile loads async, we rely on listener
+    WidgetsBinding.instance.addObserver(this);
+    // Refresh the UI periodically so MedicineCard statuses update automatically
+    _refreshTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Force UI update when coming back from background
+      if (mounted) setState(() {});
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _refreshTimer?.cancel();
+    super.dispose();
   }
 
   void _clearSelection() {
@@ -185,7 +205,64 @@ class _HomePageState extends State<HomePage> {
                           },
                           onTaken: () {
                             if (!isSelectionMode) {
-                              context.read<HomeCubit>().markAsTaken(medicine);
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Mark as Taken?'),
+                                  content: Text(
+                                    'Are you sure you want to mark ${medicine.name} as taken?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        context.read<HomeCubit>().markAsTaken(
+                                          medicine,
+                                        );
+                                      },
+                                      child: const Text(
+                                        'Confirm',
+                                        style: TextStyle(color: Colors.green),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                          onUncheck: () {
+                            if (!isSelectionMode) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Unmark as Taken?'),
+                                  content: Text(
+                                    'Are you sure you want to unmark ${medicine.name}?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        context.read<HomeCubit>().unmarkAsTaken(
+                                          medicine,
+                                        );
+                                      },
+                                      child: const Text(
+                                        'Confirm',
+                                        style: TextStyle(color: Colors.orange),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
                             }
                           },
                         );

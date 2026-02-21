@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 class MedicineCard extends StatelessWidget {
   final Medicine medicine;
   final VoidCallback? onTaken;
+  final VoidCallback? onUncheck;
   final bool isSelected;
   final VoidCallback? onLongPress;
   final VoidCallback? onTap;
@@ -14,6 +15,7 @@ class MedicineCard extends StatelessWidget {
     super.key,
     required this.medicine,
     this.onTaken,
+    this.onUncheck,
     this.isSelected = false,
     this.onLongPress,
     this.onTap,
@@ -155,10 +157,13 @@ class MedicineCard extends StatelessWidget {
                     color: Theme.of(context).colorScheme.primary,
                   )
                 : (isTaken
-                      ? const Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                        ) // Just show a green checkmark if done instead of a button
+                      ? IconButton(
+                          icon: const Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                          ),
+                          onPressed: onUncheck,
+                        )
                       : null), // Show nothing if it's in the future and not taken
           ),
         ),

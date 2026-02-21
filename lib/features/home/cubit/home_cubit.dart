@@ -169,15 +169,45 @@ class HomeCubit extends Cubit<HomeState> {
     
     final realMedicine = medicineBox.values.firstWhere((m) => m.id == medicine.id);
     
-    // We need to save to Hive.
-    realMedicine.history.add(DateTime.now());
+    // We need to save to Hive, using the specific occurrence time
+    realMedicine.history.add(medicine.startTime);
     await realMedicine.save();
     
     // Refresh list
     // We need current state to know profile and date
     if (state is HomeLoaded) {
       final cur = state as HomeLoaded;
-      loadMedicines(cur.profileId, cur.selectedDate);
+      loadMedicines(cur.profileId, cur.selectedDate, showAll: cur.isShowingAll);
+    }
+  }
+
+  Future<void> unmarkAsTaken(Medicine medicine) async {
+    final realMedicine = medicineBox.values.firstWhere((m) => m.id == medicine.id);
+    final targetDate = medicine.startTime;
+
+    if (!realMedicine.isInterval) {
+      realMedicine.history.removeWhere((dt) => 
+         dt.year == targetDate.year && 
+         dt.month == targetDate.month && 
+         dt.day == targetDate.day
+      );
+    } else {
+      final historyOnDate = realMedicine.history.where((dt) => 
+         dt.year == targetDate.year && 
+         dt.month == targetDate.month && 
+         dt.day == targetDate.day
+      ).toList();
+      if (historyOnDate.isNotEmpty) {
+        historyOnDate.sort(); // remove the last one added for that day
+        realMedicine.history.remove(historyOnDate.last);
+      }
+    }
+    
+    await realMedicine.save();
+    
+    if (state is HomeLoaded) {
+      final cur = state as HomeLoaded;
+      loadMedicines(cur.profileId, cur.selectedDate, showAll: cur.isShowingAll);
     }
   }
 
