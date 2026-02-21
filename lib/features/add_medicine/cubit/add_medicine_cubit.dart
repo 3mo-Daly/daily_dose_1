@@ -98,4 +98,76 @@ class AddMedicineCubit extends Cubit<AddMedicineState> {
       emit(AddMedicineError(e.toString()));
     }
   }
+
+  Future<void> editMedicine({
+    required String id,
+    required String profileId,
+    required String profileName,
+    required String name,
+    required String dosage,
+    String? imagePath,
+    required bool isInterval,
+    required DateTime startTime,
+    int? intervalHours,
+    DateTime? fixedTime,
+    int? durationDays,
+  }) async {
+    emit(AddMedicineLoading());
+    try {
+      final existingMedicine = medicineBox.values.firstWhere((m) => m.id == id);
+      
+      // Cancel old notifications
+      final notificationId = NotificationUtil.generateId(existingMedicine.id);
+      for (int i = 0; i < 50; i++) {
+         await notificationService.cancelNotification(notificationId + i);
+      }
+
+      final effectiveDuration = durationDays ?? 1;
+
+      final updatedMedicine = existingMedicine.copyWith(
+        name: name,
+        dosage: dosage,
+        imagePath: imagePath,
+        isInterval: isInterval,
+        startTime: startTime,
+        intervalHours: intervalHours,
+        fixedTime: fixedTime,
+        durationDays: effectiveDuration,
+      );
+
+      await medicineBox.put(existingMedicine.key, updatedMedicine);
+
+      // Schedule new notifications
+      try {
+        final initialSchedule = isInterval ? startTime : fixedTime!;
+        final DateTime endDate = initialSchedule.add(Duration(days: effectiveDuration));
+        DateTime nextTime = initialSchedule;
+        int count = 0;
+        
+        while (nextTime.isBefore(endDate) && count < 50) {
+           if (nextTime.isAfter(DateTime.now())) {
+              await notificationService.scheduleNotification(
+                id: notificationId + count,
+                title: '$profileName: time for your medicine',
+                body: '$name -> take $dosage',
+                scheduledDate: nextTime,
+              );
+              count++;
+           }
+
+           if (isInterval && intervalHours != null) {
+              nextTime = nextTime.add(Duration(hours: intervalHours));
+           } else {
+              nextTime = nextTime.add(const Duration(days: 1));
+           }
+        }
+      } catch (e) {
+        print('Error scheduling notification: $e');
+      }
+
+      emit(AddMedicineSuccess());
+    } catch (e) {
+      emit(AddMedicineError(e.toString()));
+    }
+  }
 }

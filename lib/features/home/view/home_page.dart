@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import '../../add_medicine/view/add_medicine_page.dart';
 import '../cubit/home_cubit.dart';
 import '../cubit/home_state.dart';
@@ -201,6 +203,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   selectedCardKeys.add(cardKey);
                                 }
                               });
+                            } else {
+                              _showMedicineDetails(context, medicine);
                             }
                           },
                           onTaken: () {
@@ -341,6 +345,145 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           ),
         ],
       ),
+    );
+  }
+
+  void _showMedicineDetails(BuildContext context, Medicine occurrenceMedicine) {
+    // Fetch original medicine to ensure we show and edit original start dates, not dynamically generated occurrence dates.
+    final medicine = context.read<HomeCubit>().medicineBox.values.firstWhere(
+      (m) => m.id == occurrenceMedicine.id,
+      orElse: () => occurrenceMedicine,
+    );
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        final dateFormat = DateFormat.yMMMd().add_jm();
+        final initialSchedule = medicine.isInterval
+            ? medicine.startTime
+            : (medicine.fixedTime ?? medicine.startTime);
+        final endDate = medicine.durationDays != null
+            ? initialSchedule.add(Duration(days: medicine.durationDays!))
+            : initialSchedule;
+
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 16.0,
+              right: 16.0,
+              top: 24.0,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (medicine.imagePath != null)
+                  Center(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.file(
+                        File(medicine.imagePath!),
+                        height: 120,
+                        width: 120,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )
+                else
+                  const Center(
+                    child: CircleAvatar(
+                      radius: 40,
+                      child: Icon(Icons.medication, size: 40),
+                    ),
+                  ),
+
+                const SizedBox(height: 16),
+                Center(
+                  child: Text(
+                    medicine.name,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    'Dosage: ${medicine.dosage}',
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Divider(),
+
+                ListTile(
+                  leading: const Icon(Icons.calendar_today),
+                  title: const Text('Start Date'),
+                  subtitle: Text(dateFormat.format(initialSchedule)),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.event_busy),
+                  title: const Text('End Date'),
+                  subtitle: Text(dateFormat.format(endDate)),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.repeat),
+                  title: const Text('Frequency'),
+                  subtitle: Text(
+                    medicine.isInterval && medicine.intervalHours != null
+                        ? 'Every ${medicine.intervalHours} hours'
+                        : 'Daily',
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context); // close sheet
+
+                      final profileState = context.read<ProfileCubit>().state;
+                      if (profileState is ProfileLoaded &&
+                          profileState.selectedProfileId != null) {
+                        final profileName = profileState.profiles
+                            .firstWhere(
+                              (p) => p.id == profileState.selectedProfileId,
+                            )
+                            .name;
+                        Navigator.of(context)
+                            .push(
+                              MaterialPageRoute(
+                                builder: (_) => AddMedicinePage(
+                                  profileId: profileState.selectedProfileId!,
+                                  profileName: profileName,
+                                  medicine: medicine,
+                                ),
+                              ),
+                            )
+                            .then((_) => _loadMedicines());
+                      }
+                    },
+                    icon: const Icon(Icons.edit),
+                    label: const Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Text(
+                        'Edit Medicine',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

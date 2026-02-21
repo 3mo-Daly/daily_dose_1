@@ -5,11 +5,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../cubit/add_medicine_cubit.dart';
 import '../cubit/add_medicine_state.dart';
+import '../../../models/medicine_model.dart';
 
 class AddMedicinePage extends StatefulWidget {
   final String profileId;
   final String profileName;
-  const AddMedicinePage({super.key, required this.profileId, required this.profileName});
+  final Medicine? medicine;
+  const AddMedicinePage({super.key, required this.profileId, required this.profileName, this.medicine});
 
   @override
   State<AddMedicinePage> createState() => _AddMedicinePageState();
@@ -19,6 +21,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _dosageController = TextEditingController();
+  final _durationController = TextEditingController();
   String? _imagePath;
   
   bool _isInterval = false;
@@ -27,9 +30,35 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
   int? _durationDays;
   
   @override
+  void initState() {
+    super.initState();
+    if (widget.medicine != null) {
+      final med = widget.medicine!;
+      _nameController.text = med.name;
+      _dosageController.text = med.dosage;
+      _imagePath = med.imagePath;
+      _isInterval = med.isInterval;
+      _startTime = med.isInterval ? med.startTime : (med.fixedTime ?? med.startTime);
+      _intervalHours = med.intervalHours;
+      _durationDays = med.durationDays;
+      if (_durationDays != null) {
+        _durationController.text = _durationDays.toString();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _dosageController.dispose();
+    _durationController.dispose();
+    super.dispose();
+  }
+  
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Medicine')),
+      appBar: AppBar(title: Text(widget.medicine != null ? 'Edit Medicine' : 'Add Medicine')),
       body: BlocListener<AddMedicineCubit, AddMedicineState>(
         listener: (context, state) {
           if (state is AddMedicineSuccess) {
@@ -112,6 +141,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                 ],
                 const SizedBox(height: 16),
                 TextFormField(
+                  controller: _durationController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     labelText: 'Duration (Days)',
@@ -168,18 +198,34 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-       context.read<AddMedicineCubit>().addMedicine(
-         profileId: widget.profileId,
-         profileName: widget.profileName,
-         name: _nameController.text,
-         dosage: _dosageController.text,
-         imagePath: _imagePath,
-         isInterval: _isInterval,
-         startTime: _startTime,
-         intervalHours: _isInterval ? _intervalHours : null,
-         fixedTime: !_isInterval ? _startTime : null,
-         durationDays: _durationDays,
-       );
+       if (widget.medicine != null) {
+         context.read<AddMedicineCubit>().editMedicine(
+           id: widget.medicine!.id,
+           profileId: widget.profileId,
+           profileName: widget.profileName,
+           name: _nameController.text,
+           dosage: _dosageController.text,
+           imagePath: _imagePath,
+           isInterval: _isInterval,
+           startTime: _startTime,
+           intervalHours: _isInterval ? _intervalHours : null,
+           fixedTime: !_isInterval ? _startTime : null,
+           durationDays: _durationDays,
+         );
+       } else {
+         context.read<AddMedicineCubit>().addMedicine(
+           profileId: widget.profileId,
+           profileName: widget.profileName,
+           name: _nameController.text,
+           dosage: _dosageController.text,
+           imagePath: _imagePath,
+           isInterval: _isInterval,
+           startTime: _startTime,
+           intervalHours: _isInterval ? _intervalHours : null,
+           fixedTime: !_isInterval ? _startTime : null,
+           durationDays: _durationDays,
+         );
+       }
     }
   }
 }
