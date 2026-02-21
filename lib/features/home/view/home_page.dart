@@ -17,10 +17,10 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   DateTime selectedDate = DateTime.now();
   Set<String> selectedCardKeys = {};
   bool _isShowingAll = false;
@@ -55,6 +55,55 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     setState(() {
       selectedCardKeys.clear();
     });
+  }
+
+  void navigateToAddMedicine() {
+    final profileState = context.read<ProfileCubit>().state;
+    if (profileState is ProfileLoaded &&
+        profileState.selectedProfileId != null) {
+      final profileName = profileState.profiles
+          .firstWhere((p) => p.id == profileState.selectedProfileId)
+          .name;
+      Navigator.of(context)
+          .push(
+            MaterialPageRoute(
+              builder: (_) => AddMedicinePage(
+                profileId: profileState.selectedProfileId!,
+                profileName: profileName,
+              ),
+            ),
+          )
+          .then((_) => _loadMedicines());
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a profile first'),
+        ),
+      );
+    }
+  }
+
+  void showAdvancedDeleteOptions() {
+    final profileState = context.read<ProfileCubit>().state;
+    final homeState = context.read<HomeCubit>().state;
+
+    if (profileState is ProfileLoaded &&
+        profileState.selectedProfileId != null &&
+        homeState is HomeLoaded) {
+      _showAdvancedDeleteOptions(
+        context,
+        profileState.selectedProfileId!,
+        homeState,
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Please select a profile or wait for medicines to load first.',
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -281,69 +330,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             ),
           ],
         ),
-      ),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton.small(
-            heroTag: 'deleteAll',
-            backgroundColor: Colors.red[100],
-            foregroundColor: Colors.red,
-            onPressed: () {
-              final profileState = context.read<ProfileCubit>().state;
-              final homeState = context.read<HomeCubit>().state;
-
-              if (profileState is ProfileLoaded &&
-                  profileState.selectedProfileId != null &&
-                  homeState is HomeLoaded) {
-                _showAdvancedDeleteOptions(
-                  context,
-                  profileState.selectedProfileId!,
-                  homeState,
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Please select a profile or wait for medicines to load first.',
-                    ),
-                  ),
-                );
-              }
-            },
-            child: const Icon(Icons.delete_sweep),
-          ),
-          const SizedBox(height: 16),
-          FloatingActionButton(
-            heroTag: 'addMedicine',
-            onPressed: () {
-              final profileState = context.read<ProfileCubit>().state;
-              if (profileState is ProfileLoaded &&
-                  profileState.selectedProfileId != null) {
-                final profileName = profileState.profiles
-                    .firstWhere((p) => p.id == profileState.selectedProfileId)
-                    .name;
-                Navigator.of(context)
-                    .push(
-                      MaterialPageRoute(
-                        builder: (_) => AddMedicinePage(
-                          profileId: profileState.selectedProfileId!,
-                          profileName: profileName,
-                        ),
-                      ),
-                    )
-                    .then((_) => _loadMedicines());
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Please select a profile first'),
-                  ),
-                );
-              }
-            },
-            child: const Icon(Icons.add),
-          ),
-        ],
       ),
     );
   }

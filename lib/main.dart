@@ -6,7 +6,7 @@ import 'core/services/notification_service.dart';
 import 'features/profile/cubit/profile_cubit.dart';
 import 'features/home/cubit/home_cubit.dart';
 import 'features/add_medicine/cubit/add_medicine_cubit.dart';
-import 'features/home/view/home_page.dart';
+import 'features/main/view/main_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/theme/theme_cubit.dart';
 
@@ -173,7 +173,7 @@ class MyApp extends StatelessWidget {
               iconTheme: const IconThemeData(color: Color(0xFFE0E0E0)),
             ),
             themeMode: themeMode,
-            home: const HomePage(),
+            home: const MainScreen(),
           );
         },
       ),
