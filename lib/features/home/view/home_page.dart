@@ -24,7 +24,6 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   DateTime selectedDate = DateTime.now();
   Set<String> selectedCardKeys = {};
-  bool _isShowingAll = false;
   Timer? _refreshTimer;
 
   @override
@@ -725,7 +724,6 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       context.read<HomeCubit>().loadMedicines(
         profileState.selectedProfileId!,
         selectedDate,
-        showAll: _isShowingAll,
       );
     }
   }
@@ -736,13 +734,11 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         onTap: () {
           setState(() {
             if (value == 0) {
-              selectedDate = DateTime.now();
-              _isShowingAll = false;
+              selectedDate = DateTime.now().subtract(const Duration(days: 1));
             } else if (value == 1) {
-              selectedDate = DateTime.now().add(const Duration(days: 1));
-              _isShowingAll = false;
+              selectedDate = DateTime.now();
             } else if (value == 2) {
-              _isShowingAll = true;
+              selectedDate = DateTime.now().add(const Duration(days: 1));
             }
           });
           _clearSelection();
@@ -772,6 +768,10 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Widget _buildDateToggle() {
+    final isYesterday = DateUtils.isSameDay(
+      selectedDate,
+      DateTime.now().subtract(const Duration(days: 1)),
+    );
     final isToday = DateUtils.isSameDay(selectedDate, DateTime.now());
     final isTomorrow = DateUtils.isSameDay(
       selectedDate,
@@ -779,12 +779,12 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
 
     int selectedSegment = -1;
-    if (_isShowingAll) {
-      selectedSegment = 2;
-    } else if (isToday) {
+    if (isYesterday) {
       selectedSegment = 0;
-    } else if (isTomorrow) {
+    } else if (isToday) {
       selectedSegment = 1;
+    } else if (isTomorrow) {
+      selectedSegment = 2;
     }
 
     return Container(
@@ -796,9 +796,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ),
       child: Row(
         children: [
-          _buildTab(title: "Today", isActive: selectedSegment == 0, value: 0),
-          _buildTab(title: "Tomorrow", isActive: selectedSegment == 1, value: 1),
-          _buildTab(title: "All", isActive: selectedSegment == 2, value: 2),
+          _buildTab(title: "Yesterday", isActive: selectedSegment == 0, value: 0),
+          _buildTab(title: "Today", isActive: selectedSegment == 1, value: 1),
+          _buildTab(title: "Tomorrow", isActive: selectedSegment == 2, value: 2),
         ],
       ),
     );

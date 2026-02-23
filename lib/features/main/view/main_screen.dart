@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../home/view/home_page.dart';
 import '../../report/view/report_page.dart';
+import '../../all_medicines/view/all_medicines_page.dart';
 import '../../../core/theme/app_theme.dart';
 
 class MainScreen extends StatefulWidget {
@@ -18,9 +19,10 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
-        index: _currentIndex == 3 ? 1 : 0,
+        index: _currentIndex == 4 ? 2 : (_currentIndex == 1 ? 1 : 0),
         children: [
           HomePage(key: _homePageKey),
+          const AllMedicinesPage(),
           const ReportPage(),
         ],
       ),
@@ -45,6 +47,11 @@ class _MainScreenState extends State<MainScreen> {
               label: 'Home',
             ),
             NavigationDestination(
+              icon: const Icon(Icons.list_alt),
+              selectedIcon: Icon(Icons.list_alt_rounded, color: Theme.of(context).colorScheme.primary),
+              label: 'All',
+            ),
+            NavigationDestination(
               icon: const Icon(Icons.add_circle_outline),
               selectedIcon: Icon(Icons.add_circle, color: Theme.of(context).colorScheme.primary),
               label: 'Add',
@@ -61,10 +68,10 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ],
           onDestinationSelected: (index) {
-            if (index == 1) {
+            if (index == 2) {
               // Add Medicine action
               _homePageKey.currentState?.navigateToAddMedicine();
-            } else if (index == 2) {
+            } else if (index == 3) {
               // Delete Action
               _homePageKey.currentState?.showAdvancedDeleteOptions();
             } else {
