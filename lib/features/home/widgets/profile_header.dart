@@ -13,12 +13,13 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeCubit, ThemeMode>(
-      builder: (context, themeMode) {
-        return BlocBuilder<ProfileCubit, ProfileState>(
-          builder: (context, state) {
-            if (state is ProfileLoaded) {
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        if (state is ProfileLoaded) {
+          return BlocBuilder<ThemeCubit, ThemeMode>(
+            builder: (context, themeMode) {
               return SizedBox(
+                key: ValueKey(themeMode), // Force rebuild on theme change
                 height: 120, // Increased height to prevent bottom overflow
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
@@ -46,7 +47,7 @@ class ProfileHeader extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Text('Add', style: TextStyle(color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.7), fontWeight: FontWeight.w500)),
+                            Text('Add', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7), fontWeight: FontWeight.w500)),
                           ],
                         ),
                       );
@@ -96,7 +97,7 @@ class ProfileHeader extends StatelessWidget {
                           Text(
                             profile.name,
                             style: TextStyle(
-                              color: Theme.of(context).textTheme.bodyLarge?.color,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: isSelected
                                   ? FontWeight.bold
                                   : FontWeight.w500,
@@ -108,10 +109,10 @@ class ProfileHeader extends StatelessWidget {
                   },
                 ),
               );
-            }
-            return const SizedBox.shrink();
-          },
-        );
+            },
+          );
+        }
+        return const SizedBox.shrink();
       },
     );
   }
