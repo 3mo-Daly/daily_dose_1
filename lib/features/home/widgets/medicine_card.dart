@@ -52,33 +52,33 @@ class MedicineCard extends StatelessWidget {
     if (isTaken) {
       // DONE
       statusText = 'Taken';
-      statusColor = Colors.grey; // Muted color for taken
+      statusColor = isDarkMode ? Colors.grey[500]! : Colors.grey; // Muted color for taken
       statusIcon = Icons.check_circle;
       cardColor = isDarkMode
-          ? Colors.grey[900]?.withValues(alpha: 0.3)
+          ? Colors.grey[800]?.withValues(alpha: 0.5)
           : Colors.grey[300];
     } else if (isPassed) {
       // PASSED
       statusText = 'Missed';
-      statusColor = Colors.red;
+      statusColor = isDarkMode ? Colors.red[400]! : Colors.red;
       statusIcon = Icons.error_outline;
       cardColor = isDarkMode
-          ? Colors.red[900]?.withValues(alpha: 0.3)
+          ? Colors.red[900]?.withValues(alpha: 0.6)
           : Colors.red[50];
     } else if (isInProgress) {
       // IN PROGRESS
       statusText = 'Time to take';
-      statusColor = Colors.orange;
+      statusColor = isDarkMode ? Colors.orange[400]! : Colors.orange;
       statusIcon = Icons.access_time_filled;
       cardColor = isDarkMode
-          ? Colors.orange[900]?.withValues(alpha: 0.3)
+          ? Colors.orange[900]?.withValues(alpha: 0.6)
           : Colors.orange[50];
     } else {
       // FUTURE
       statusText = 'Upcoming';
-      statusColor = Colors.grey;
+      statusColor = isDarkMode ? Colors.grey[400]! : Colors.grey;
       statusIcon = Icons.schedule;
-      cardColor = null; // Default surface color
+      cardColor = isDarkMode ? Theme.of(context).colorScheme.surfaceContainerHighest : null; // Default surface color
     }
 
     return Card(
@@ -113,7 +113,7 @@ class MedicineCard extends StatelessWidget {
                   )
                 : CircleAvatar(
                     backgroundColor: statusColor.withValues(alpha: 0.2),
-                    child: Icon(Icons.medication, color: statusColor),
+                    child: Icon(Icons.medication_rounded, color: statusColor),
                   ),
             title: Text(
               medicine.name,

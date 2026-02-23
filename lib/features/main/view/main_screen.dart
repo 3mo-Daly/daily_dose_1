@@ -28,12 +28,15 @@ class _MainScreenState extends State<MainScreen> {
       ),
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
-          indicatorColor: Theme.of(context).colorScheme.primary.withOpacity(0.12),
+          indicatorColor: Theme.of(context).colorScheme.secondaryContainer,
+          indicatorShape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           labelTextStyle: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w700, fontSize: 13);
+              return TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w800, fontSize: 13);
             }
-            return TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500, fontSize: 12);
+            return TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600, fontSize: 12);
           }),
         ),
         child: NavigationBar(
@@ -43,27 +46,27 @@ class _MainScreenState extends State<MainScreen> {
           destinations: [
             NavigationDestination(
               icon: const Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home_rounded, color: Theme.of(context).colorScheme.primary),
+              selectedIcon: Icon(Icons.home_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 28),
               label: 'Home',
             ),
             NavigationDestination(
               icon: const Icon(Icons.list_alt),
-              selectedIcon: Icon(Icons.list_alt_rounded, color: Theme.of(context).colorScheme.primary),
+              selectedIcon: Icon(Icons.list_alt_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 28),
               label: 'All',
             ),
             NavigationDestination(
               icon: const Icon(Icons.add_circle_outline),
-              selectedIcon: Icon(Icons.add_circle, color: Theme.of(context).colorScheme.primary),
+              selectedIcon: Icon(Icons.add_circle, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 28),
               label: 'Add',
             ),
             NavigationDestination(
               icon: const Icon(Icons.delete_outline),
-              selectedIcon: Icon(Icons.delete, color: Theme.of(context).colorScheme.primary),
+              selectedIcon: Icon(Icons.delete, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 28),
               label: 'Delete',
             ),
             NavigationDestination(
               icon: const Icon(Icons.bar_chart_outlined),
-              selectedIcon: Icon(Icons.bar_chart_rounded, color: Theme.of(context).colorScheme.primary),
+              selectedIcon: Icon(Icons.bar_chart_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 28),
               label: 'Report',
             ),
           ],

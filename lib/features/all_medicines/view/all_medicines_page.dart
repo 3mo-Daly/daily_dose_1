@@ -325,7 +325,7 @@ class _MedicineReportSheet extends StatelessWidget {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.medication,
+                          Icons.medication_rounded,
                           size: 48,
                           color: Theme.of(context).colorScheme.primary,
                         ),
