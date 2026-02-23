@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../home/view/home_page.dart';
 import '../../report/view/report_page.dart';
+import '../../../core/theme/app_theme.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -23,41 +24,58 @@ class _MainScreenState extends State<MainScreen> {
           const ReportPage(),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle),
-            label: 'Add',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.delete),
-            label: 'Delete',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Report',
-          ),
-        ],
-        onTap: (index) {
-          if (index == 1) {
-            // Add Medicine action
-            _homePageKey.currentState?.navigateToAddMedicine();
-          } else if (index == 2) {
-            // Delete Action
-            _homePageKey.currentState?.showAdvancedDeleteOptions();
-          } else {
-            // Switch tab
-            setState(() {
-              _currentIndex = index;
-            });
-          }
-        },
+      bottomNavigationBar: NavigationBarTheme(
+        data: NavigationBarThemeData(
+          indicatorColor: AppColors.primary.withOpacity(0.12),
+          labelTextStyle: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700, fontSize: 13);
+            }
+            return TextStyle(color: AppColors.text, fontWeight: FontWeight.w500, fontSize: 12);
+          }),
+        ),
+        child: NavigationBar(
+          backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : AppColors.surface,
+          elevation: 20,
+          shadowColor: AppColors.text.withOpacity(0.2),
+          selectedIndex: _currentIndex,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home_rounded, color: AppColors.primary),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.add_circle_outline),
+              selectedIcon: Icon(Icons.add_circle, color: AppColors.primary),
+              label: 'Add',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.delete_outline),
+              selectedIcon: Icon(Icons.delete, color: AppColors.primary),
+              label: 'Delete',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.bar_chart_outlined),
+              selectedIcon: Icon(Icons.bar_chart_rounded, color: AppColors.primary),
+              label: 'Report',
+            ),
+          ],
+          onDestinationSelected: (index) {
+            if (index == 1) {
+              // Add Medicine action
+              _homePageKey.currentState?.navigateToAddMedicine();
+            } else if (index == 2) {
+              // Delete Action
+              _homePageKey.currentState?.showAdvancedDeleteOptions();
+            } else {
+              // Switch tab
+              setState(() {
+                _currentIndex = index;
+              });
+            }
+          },
+        ),
       ),
     );
   }

@@ -11,6 +11,7 @@ import '../../profile/cubit/profile_state.dart';
 import '../widgets/medicine_card.dart';
 import '../widgets/profile_header.dart';
 import '../../../core/theme/theme_cubit.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../models/medicine_model.dart';
 
 class HomePage extends StatefulWidget {
@@ -223,8 +224,26 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is HomeLoaded) {
                     if (state.medicines.isEmpty) {
-                      return const Center(
-                        child: Text('No medicines for this day'),
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.medication_liquid_rounded,
+                              size: 80,
+                              color: AppColors.text.withOpacity(0.15),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              "No medicines for this day",
+                              style: TextStyle(
+                                color: AppColors.text.withOpacity(0.7),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     }
                     return ListView.builder(
@@ -711,6 +730,47 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
+  Widget _buildTab({required String title, required bool isActive, required int value}) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            if (value == 0) {
+              selectedDate = DateTime.now();
+              _isShowingAll = false;
+            } else if (value == 1) {
+              selectedDate = DateTime.now().add(const Duration(days: 1));
+              _isShowingAll = false;
+            } else if (value == 2) {
+              _isShowingAll = true;
+            }
+          });
+          _clearSelection();
+          _loadMedicines();
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: isActive
+              ? BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2C2C2C) : AppColors.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: Theme.of(context).brightness == Brightness.dark ? null : AppColors.softShadow,
+                )
+              : const BoxDecoration(color: Colors.transparent),
+          alignment: Alignment.center,
+          child: Text(
+            title,
+            style: TextStyle(
+              color: isActive ? AppColors.text : AppColors.text.withOpacity(0.5),
+              fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+              fontSize: 14,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildDateToggle() {
     final isToday = DateUtils.isSameDay(selectedDate, DateTime.now());
     final isTomorrow = DateUtils.isSameDay(
@@ -727,31 +787,19 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       selectedSegment = 1;
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: SegmentedButton<int>(
-        segments: const [
-          ButtonSegment(value: 0, label: Text('Today')),
-          ButtonSegment(value: 1, label: Text('Tomorrow')),
-          ButtonSegment(value: 2, label: Text('All')),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : AppColors.text.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Row(
+        children: [
+          _buildTab(title: "Today", isActive: selectedSegment == 0, value: 0),
+          _buildTab(title: "Tomorrow", isActive: selectedSegment == 1, value: 1),
+          _buildTab(title: "All", isActive: selectedSegment == 2, value: 2),
         ],
-        selected: {if (selectedSegment != -1) selectedSegment},
-        onSelectionChanged: (Set<int> newSelection) {
-          setState(() {
-            if (newSelection.contains(0)) {
-              selectedDate = DateTime.now();
-              _isShowingAll = false;
-            } else if (newSelection.contains(1)) {
-              selectedDate = DateTime.now().add(const Duration(days: 1));
-              _isShowingAll = false;
-            } else if (newSelection.contains(2)) {
-              _isShowingAll = true;
-            }
-          });
-          _clearSelection();
-          _loadMedicines();
-        },
-        emptySelectionAllowed: true,
       ),
     );
   }

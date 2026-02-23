@@ -5,6 +5,7 @@ import '../../home/cubit/home_cubit.dart';
 import '../../home/cubit/home_state.dart';
 import '../../profile/cubit/profile_cubit.dart';
 import '../../profile/cubit/profile_state.dart';
+import '../../../core/theme/app_theme.dart';
 
 class ReportPage extends StatelessWidget {
   const ReportPage({super.key});
@@ -12,9 +13,6 @@ class ReportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Report'),
-      ),
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, profileState) {
           if (profileState is ProfileLoaded && profileState.selectedProfileId != null) {
@@ -60,68 +58,58 @@ class ReportPage extends StatelessWidget {
                    if (!isExpired) activeCount++;
                 }
 
-                return SingleChildScrollView(
+                return SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Center(
-                          child: Column(
-                            children: [
-                              CircleAvatar(
-                                radius: 56,
-                                backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                                backgroundImage: profile.avatarPath != null ? FileImage(File(profile.avatarPath!)) : null,
-                                child: profile.avatarPath == null
-                                    ? Icon(Icons.person, size: 56, color: Theme.of(context).colorScheme.primary)
-                                    : null,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                profile.name,
-                                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 48),
-                        const Text('Summary Statistics', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 24),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Expanded(
-                              child: _StatCard(
-                                title: 'Total\nMedicines',
-                                value: totalMedicines.toString(),
-                                icon: Icons.medication,
-                                color: Colors.blueAccent,
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.primary.withOpacity(0.1),
+                                image: profile.avatarPath != null ? DecorationImage(image: FileImage(File(profile.avatarPath!)), fit: BoxFit.cover) : null,
                               ),
+                              child: profile.avatarPath == null 
+                                ? Center(child: Text(profile.name.isNotEmpty ? profile.name[0].toUpperCase() : 'U', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 16)))
+                                : null,
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: _StatCard(
-                                title: 'Active\nPrescriptions',
-                                value: activeCount.toString(),
-                                icon: Icons.local_pharmacy,
-                                color: Colors.green,
+                            const SizedBox(width: 14),
+                            Text(
+                              profile.name,
+                              style: const TextStyle(
+                                color: AppColors.text,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
+                        ),
+                        const SizedBox(height: 32),
+                        const Text(
+                          "My Performance",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.text),
                         ),
                         const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _StatCard(
-                                title: 'Total Doses\nTaken',
-                                value: takenCount.toString(),
-                                icon: Icons.check_circle,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                            ),
-                            const Spacer(), 
-                          ],
+                        Expanded(
+                          child: GridView.count(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                            childAspectRatio: 1.1,
+                            physics: const BouncingScrollPhysics(),
+                            children: [
+                              _StatCard(title: 'Medicines', value: totalMedicines.toString(), icon: Icons.medication_rounded, color: AppColors.primary),
+                              _StatCard(title: 'Active', value: activeCount.toString(), icon: Icons.local_pharmacy_rounded, color: const Color(0xFFE57373)),
+                              _StatCard(title: 'Doses Taken', value: takenCount.toString(), icon: Icons.check_circle_rounded, color: const Color(0xFFFFB74D)),
+                              _StatCard(title: 'Adherence', value: 'N/A', icon: Icons.pie_chart_rounded, color: AppColors.accent),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -147,28 +135,44 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                shape: BoxShape.circle,
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: Theme.of(context).brightness == Brightness.dark ? null : AppColors.softShadow,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 28),
+          const Spacer(),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w800,
+                color: AppColors.text,
+                height: 1.1,
               ),
-              child: Icon(icon, color: color, size: 32),
             ),
-            const SizedBox(height: 16),
-            Text(value, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            Text(title, style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7))),
-          ],
-        ),
+          ),
+          const SizedBox(height: 4),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.text.withOpacity(0.6),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

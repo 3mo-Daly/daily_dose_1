@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../home/cubit/home_cubit.dart';
 import '../../profile/cubit/profile_cubit.dart';
 import '../../profile/cubit/profile_state.dart';
+import '../../../core/theme/app_theme.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key});
@@ -22,7 +23,7 @@ class ProfileHeader extends StatelessWidget {
               itemBuilder: (context, index) {
                 if (index == state.profiles.length) {
                   return Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                     child: Column(
                       children: [
                         InkWell(
@@ -30,13 +31,19 @@ class ProfileHeader extends StatelessWidget {
                             // Implement add profile dialog
                             _showAddProfileDialog(context);
                           },
-                          child: const CircleAvatar(
-                            radius: 30,
-                            child: Icon(Icons.add),
+                          borderRadius: BorderRadius.circular(30),
+                          child: Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.primary.withOpacity(0.10),
+                            ),
+                            child: const Icon(Icons.add_rounded, color: AppColors.primary, size: 28),
                           ),
                         ),
                         const SizedBox(height: 4),
-                        const Text('Add'),
+                        Text('Add', style: TextStyle(color: AppColors.text.withOpacity(0.7), fontWeight: FontWeight.w500)),
                       ],
                     ),
                   );
@@ -46,7 +53,7 @@ class ProfileHeader extends StatelessWidget {
                 final isSelected = profile.id == state.selectedProfileId;
 
                 return Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                   child: Column(
                     children: [
                       InkWell(
@@ -58,37 +65,38 @@ class ProfileHeader extends StatelessWidget {
                         onLongPress: () {
                           _showEditDeleteOptions(context, profile);
                         },
+                        borderRadius: BorderRadius.circular(30),
                         child: Container(
+                          width: 60,
+                          height: 60,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: isSelected
-                                  ? Theme.of(context).colorScheme.primary
+                                  ? AppColors.primary
                                   : Colors.transparent,
                               width: 3,
                             ),
+                            image: profile.avatarPath != null ? DecorationImage(image: FileImage(File(profile.avatarPath!)), fit: BoxFit.cover) : null,
                           ),
-                          child: CircleAvatar(
-                            radius: 20,
-                            backgroundImage: profile.avatarPath != null
-                                ? FileImage(File(profile.avatarPath!))
-                                : null,
-                            child: profile.avatarPath == null
-                                ? Text(
-                                    profile.name[0].toUpperCase(),
-                                    style: TextStyle(fontSize: 12),
-                                  )
-                                : null,
-                          ),
+                          child: profile.avatarPath == null
+                            ? Center(
+                                child: Text(
+                                  profile.name.isNotEmpty ? profile.name[0].toUpperCase() : 'U',
+                                  style: const TextStyle(fontSize: 20, color: AppColors.primary, fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            : null,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         profile.name,
                         style: TextStyle(
+                          color: AppColors.text,
                           fontWeight: isSelected
                               ? FontWeight.bold
-                              : FontWeight.normal,
+                              : FontWeight.w500,
                         ),
                       ),
                     ],

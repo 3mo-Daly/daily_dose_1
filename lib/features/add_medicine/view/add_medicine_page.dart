@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../cubit/add_medicine_cubit.dart';
 import '../cubit/add_medicine_state.dart';
 import '../../../models/medicine_model.dart';
+import '../../../core/theme/app_theme.dart';
 
 class AddMedicinePage extends StatefulWidget {
   final String profileId;
@@ -79,12 +80,17 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                 GestureDetector(
                   onTap: _pickImage,
                   child: Center(
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                      backgroundImage: _imagePath != null ? FileImage(File(_imagePath!)) : null,
-                      child: _imagePath == null 
-                        ? const Icon(Icons.add_a_photo, size: 40)
+                    child: Container(
+                      width: 88,
+                      height: 88,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : AppColors.surface,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: Theme.of(context).brightness == Brightness.dark ? null : AppColors.softShadow,
+                        image: _imagePath != null ? DecorationImage(image: FileImage(File(_imagePath!)), fit: BoxFit.cover) : null,
+                      ),
+                      child: _imagePath == null
+                        ? Icon(Icons.image_outlined, color: AppColors.text.withOpacity(0.3), size: 32)
                         : null,
                     ),
                   ),
@@ -108,45 +114,93 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                   validator: (value) => value!.isEmpty ? 'Please enter dosage' : null,
                 ),
                 const SizedBox(height: 24),
-                SwitchListTile(
-                  title: const Text('Repeat Interval'),
-                  value: _isInterval,
-                  onChanged: (val) {
-                    setState(() {
-                      _isInterval = val;
-                    });
-                  },
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : AppColors.surface,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: Theme.of(context).brightness == Brightness.dark ? null : AppColors.softShadow,
+                  ),
+                  child: Column(
+                    children: [
+                      InkWell(
+                        onTap: _pickTime,
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Start Time", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                              Row(
+                                children: [
+                                  Text(DateFormat.jm().format(_startTime), style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.primary, fontSize: 15)),
+                                  const SizedBox(width: 8),
+                                  Icon(Icons.access_time_filled_rounded, color: AppColors.primary.withOpacity(0.8), size: 22),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Divider(color: Theme.of(context).scaffoldBackgroundColor, height: 1, thickness: 1.5, indent: 16, endIndent: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text("Daily Repeat", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                            Row(
+                              children: [
+                                Switch(
+                                  value: _isInterval,
+                                  activeColor: AppColors.primary,
+                                  onChanged: (val) => setState(() => _isInterval = val),
+                                ),
+                                const SizedBox(width: 8),
+                                Icon(Icons.repeat_rounded, color: AppColors.primary.withOpacity(0.8), size: 22),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (_isInterval) ...[
+                        Divider(color: Theme.of(context).scaffoldBackgroundColor, height: 1, thickness: 1.5, indent: 16, endIndent: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Frequency", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                              Expanded(
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<int>(
+                                    alignment: Alignment.centerRight,
+                                    isExpanded: true,
+                                    icon: Icon(Icons.arrow_drop_down, color: AppColors.primary.withOpacity(0.8)),
+                                    value: _intervalHours,
+                                    items: [4, 6, 8, 12, 24].map((e) => DropdownMenuItem(
+                                      value: e,
+                                      child: Align(alignment: Alignment.centerRight, child: Text('Every $e hours', style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.primary, fontSize: 15))),
+                                    )).toList(),
+                                    onChanged: (val) => setState(() => _intervalHours = val),
+                                    hint: const Align(alignment: Alignment.centerRight, child: Text("Select", style: TextStyle(color: AppColors.primary))),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ],
+                  ),
                 ),
-                ListTile(
-                  title: const Text('Start Time'),
-                  subtitle: Text(DateFormat.jm().format(_startTime)),
-                  trailing: const Icon(Icons.access_time),
-                  onTap: _pickTime,
-                ),
-                if (_isInterval) ...[
-                   const SizedBox(height: 16),
-                   DropdownButtonFormField<int>(
-                     decoration: const InputDecoration(
-                       labelText: 'Frequency',
-                       border: OutlineInputBorder(),
-                     ),
-                     value: _intervalHours,
-                     items: [4, 6, 8, 12, 24].map((e) => DropdownMenuItem(
-                       value: e,
-                       child: Text('Every $e hours'),
-                     )).toList(),
-                     onChanged: (val) => setState(() => _intervalHours = val),
-                     validator: (val) => _isInterval && val == null ? 'Select frequency' : null,
-                   ),
-                ],
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 TextFormField(
                   controller: _durationController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     labelText: 'Duration (Days)',
                     hintText: 'Leave empty for just today',
-                    border: OutlineInputBorder(),
                   ),
                   onChanged: (val) {
                     setState(() {
@@ -157,12 +211,18 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                 const SizedBox(height: 32),
                 SizedBox(
                   width: double.infinity,
+                  height: 56,
                   child: ElevatedButton(
-                    onPressed: _submit,
-                    child: const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text('Save Medicine'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
+                    onPressed: _submit,
+                    child: const Text('Save Medicine', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
                   ),
                 ),
               ],
