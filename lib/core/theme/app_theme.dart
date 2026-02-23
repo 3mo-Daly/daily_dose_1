@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color primary = Color(0xFF0A5C53); // Deep Teal
+  static const Color primary = Color(0xFF10B981); // Modern Emerald
   static const Color accent = Color(0xFF82CBAE);  // Soft Sage
   static const Color background = Color(0xFFF7F9F9); // Whisper Gray
   static const Color surface = Color(0xFFFFFFFF); // Pure White
-  static const Color text = Color(0xFF2C3E50); // Dark Slate
+  static const Color text = Color(0xFF1E293B); // Dark Slate
 
   // Reusable soft shadow to prevent harsh black drop shadows
   static final List<BoxShadow> softShadow = [
@@ -27,12 +27,12 @@ final ThemeData appTheme = ThemeData(
     surface: AppColors.surface,
     background: AppColors.background,
     surfaceContainerHighest: AppColors.text.withOpacity(0.05),
-    secondaryContainer: AppColors.surface,
-    onSecondaryContainer: AppColors.text,
-    outline: AppColors.text.withOpacity(0.5),
+    secondaryContainer: AppColors.primary,
+    onSecondaryContainer: const Color(0xFFFFFFFF),
+    outline: const Color(0xFF64748B),
     outlineVariant: AppColors.text.withOpacity(0.15),
     onSurfaceVariant: AppColors.text.withOpacity(0.6),
-    primaryContainer: AppColors.primary.withOpacity(0.10),
+    primaryContainer: const Color(0xFFE6F8F3),
   ),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: AppColors.text),
@@ -64,7 +64,8 @@ class AppDarkColors {
   static const Color accent = Color(0xFF82CBAE);  // Soft Sage
   static const Color background = Color(0xFF121A19); // Dark Pine
   static const Color surface = Color(0xFF1E2A28); // Elevated Pine
-  static const Color text = Color(0xFFF4F9F8); // Ice White
+  static const Color text = Color(0xFFFFFFFF); // Pure White as requested
+
   static const Color textSecondary = Color(0xFF8E9E9B); // Muted Grey-Green
   static const Color inputFill = Color(0xFF1A2523); // Input Field Background
   
@@ -73,6 +74,7 @@ class AppDarkColors {
   static const Color inactiveTabText = Color(0xFFA5BDB9);
   static const Color navInactive = Color(0xFFB0C4C1);
   static const Color emptyIllustration = Color(0xFF4A625D);
+  static const Color activeTab = Color(0xFF4DB6AC); // Bright Vibrant Green
 }
 
 final ThemeData darkAppTheme = ThemeData(
@@ -88,7 +90,7 @@ final ThemeData darkAppTheme = ThemeData(
     onSurface: AppDarkColors.text,
     onSurfaceVariant: AppDarkColors.navInactive,
     surfaceContainerHighest: AppDarkColors.surfaceVariant,
-    secondaryContainer: AppDarkColors.primary,
+    secondaryContainer: AppDarkColors.activeTab,
     onSecondaryContainer: AppDarkColors.onPrimaryActiveText,
     outline: AppDarkColors.inactiveTabText,
     outlineVariant: AppDarkColors.emptyIllustration,

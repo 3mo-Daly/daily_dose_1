@@ -215,24 +215,26 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                     });
                   },
                 ),
-                const SizedBox(height: 32),
-                SizedBox(
-                  child: ElevatedButton(
-                    onPressed: _submit,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: const Text('Save Medicine', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-                  ),
-                ),
               ],
             ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: SizedBox(
+          width: double.infinity,
+          height: 65,
+          child: ElevatedButton(
+            onPressed: _submit,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              elevation: 0,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
+            ),
+            child: const Text('Save Medicine', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
           ),
         ),
       ),
