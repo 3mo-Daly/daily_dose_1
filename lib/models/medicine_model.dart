@@ -50,6 +50,9 @@ class Medicine extends HiveObject {
   // Transient property for UI state (not persisted)
   final bool isTaken;
 
+  @HiveField(14)
+  final Map<String, DateTime> exactTakenTimes;
+
   Medicine({
     required this.id,
     required this.profileId,
@@ -66,8 +69,10 @@ class Medicine extends HiveObject {
     this.hideBefore,
     this.hideAfter,
     this.isTaken = false,
+    Map<String, DateTime>? exactTakenTimes,
   })  : history = history ?? [],
-        deletedOccurrences = deletedOccurrences ?? [];
+        deletedOccurrences = deletedOccurrences ?? [],
+        exactTakenTimes = exactTakenTimes ?? {};
 
   Medicine copyWith({
     String? id,
@@ -102,6 +107,7 @@ class Medicine extends HiveObject {
       hideBefore: hideBefore ?? this.hideBefore,
       hideAfter: hideAfter ?? this.hideAfter,
       isTaken: isTaken ?? this.isTaken,
+      exactTakenTimes: exactTakenTimes ?? this.exactTakenTimes,
     );
   }
 }

@@ -14,19 +14,19 @@ class AllMedicinesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('All Medicines'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('All Medicines'), centerTitle: true),
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, profileState) {
-          if (profileState is ProfileLoaded && profileState.selectedProfileId != null) {
+          if (profileState is ProfileLoaded &&
+              profileState.selectedProfileId != null) {
             final profileId = profileState.selectedProfileId!;
-            
+
             // Re-use HomeCubit for the Hive Box reference so it rebuilds on changes
             final homeCubit = context.watch<HomeCubit>();
-            final allMedicines = homeCubit.medicineBox.values.where((m) => m.profileId == profileId).toList();
-            
+            final allMedicines = homeCubit.medicineBox.values
+                .where((m) => m.profileId == profileId)
+                .toList();
+
             // Sort by start time, newest to oldest
             allMedicines.sort((a, b) => b.startTime.compareTo(a.startTime));
 
@@ -44,7 +44,10 @@ class AllMedicinesPage extends StatelessWidget {
                     Text(
                       "No medicines recorded",
                       style: TextStyle(
-                        color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.7),
+                        color:
+                            (Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black)
+                                .withOpacity(0.7),
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -59,13 +62,15 @@ class AllMedicinesPage extends StatelessWidget {
               itemCount: allMedicines.length,
               itemBuilder: (context, index) {
                 final medicine = allMedicines[index];
-                
+
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
                   ),
                   color: Theme.of(context).colorScheme.surface,
                   child: InkWell(
@@ -79,11 +84,15 @@ class AllMedicinesPage extends StatelessWidget {
                             width: 60,
                             height: 60,
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.2),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.secondaryContainer.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(16),
-                              image: medicine.imagePath != null 
+                              image: medicine.imagePath != null
                                   ? DecorationImage(
-                                      image: FileImage(File(medicine.imagePath!)),
+                                      image: FileImage(
+                                        File(medicine.imagePath!),
+                                      ),
                                       fit: BoxFit.cover,
                                     )
                                   : null,
@@ -91,7 +100,9 @@ class AllMedicinesPage extends StatelessWidget {
                             child: medicine.imagePath == null
                                 ? Icon(
                                     Icons.medication_rounded,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                     size: 32,
                                   )
                                 : null,
@@ -112,7 +123,12 @@ class AllMedicinesPage extends StatelessWidget {
                                 Text(
                                   medicine.dosage,
                                   style: TextStyle(
-                                    color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.6),
+                                    color:
+                                        (Theme.of(
+                                                  context,
+                                                ).textTheme.bodyLarge?.color ??
+                                                Colors.black)
+                                            .withOpacity(0.6),
                                     fontSize: 14,
                                   ),
                                 ),
@@ -149,7 +165,7 @@ class AllMedicinesPage extends StatelessWidget {
 
 class _MedicineReportSheet extends StatelessWidget {
   final Medicine medicine;
-  
+
   const _MedicineReportSheet({required this.medicine});
 
   @override
@@ -157,26 +173,27 @@ class _MedicineReportSheet extends StatelessWidget {
     final dateFormat = DateFormat.yMMMd().add_jm();
     final onlyDateFormat = DateFormat.yMMMd();
     final timeFormat = DateFormat.jm();
-    
+
     final initialSchedule = medicine.isInterval
         ? medicine.startTime
         : (medicine.fixedTime ?? medicine.startTime);
-        
+
     final endDate = medicine.durationDays != null
         ? initialSchedule.add(Duration(days: medicine.durationDays!))
         : null;
 
     // Calculate Doses Taken
     final takenCount = medicine.history.length;
-    
+
     // Sort history for display
-    final List<DateTime> sortedHistory = List.from(medicine.history)..sort((a, b) => b.compareTo(a));
+    final List<DateTime> sortedHistory = List.from(medicine.history)
+      ..sort((a, b) => b.compareTo(a));
 
     // Calculate Missed Doses approximation
     int missedCount = 0;
     int expectedCount = 0;
     final now = DateTime.now();
-    
+
     // Determine the end boundary for calculation (now, or earlier if it ended)
     final calcEnd = (endDate != null && endDate.isBefore(now)) ? endDate : now;
 
@@ -185,16 +202,20 @@ class _MedicineReportSheet extends StatelessWidget {
       while (current.isBefore(calcEnd)) {
         // Check bounds
         bool isHidden = false;
-        if (medicine.hideBefore != null && current.isBefore(medicine.hideBefore!)) isHidden = true;
-        if (medicine.hideAfter != null && current.isAfter(medicine.hideAfter!)) isHidden = true;
+        if (medicine.hideBefore != null &&
+            current.isBefore(medicine.hideBefore!))
+          isHidden = true;
+        if (medicine.hideAfter != null && current.isAfter(medicine.hideAfter!))
+          isHidden = true;
 
         // Check explicit deleted occurrences
-        bool isDeleted = medicine.deletedOccurrences.any((dt) => 
-            dt.year == current.year && 
-            dt.month == current.month && 
-            dt.day == current.day &&
-            dt.hour == current.hour &&
-            dt.minute == current.minute
+        bool isDeleted = medicine.deletedOccurrences.any(
+          (dt) =>
+              dt.year == current.year &&
+              dt.month == current.month &&
+              dt.day == current.day &&
+              dt.hour == current.hour &&
+              dt.minute == current.minute,
         );
 
         if (!isHidden && !isDeleted) {
@@ -203,35 +224,52 @@ class _MedicineReportSheet extends StatelessWidget {
         current = current.add(Duration(hours: medicine.intervalHours!));
       }
     } else if (medicine.fixedTime != null) {
-      DateTime current = DateTime(medicine.startTime.year, medicine.startTime.month, medicine.startTime.day);
+      DateTime current = DateTime(
+        medicine.startTime.year,
+        medicine.startTime.month,
+        medicine.startTime.day,
+      );
       final finalEndDay = DateTime(calcEnd.year, calcEnd.month, calcEnd.day);
-      
+
       while (!current.isAfter(finalEndDay)) {
-        final occurrenceTime = DateTime(current.year, current.month, current.day, medicine.fixedTime!.hour, medicine.fixedTime!.minute);
-        
+        final occurrenceTime = DateTime(
+          current.year,
+          current.month,
+          current.day,
+          medicine.fixedTime!.hour,
+          medicine.fixedTime!.minute,
+        );
+
         if (occurrenceTime.isBefore(calcEnd)) {
-           bool isHidden = false;
-           if (medicine.hideBefore != null && occurrenceTime.isBefore(medicine.hideBefore!)) isHidden = true;
-           if (medicine.hideAfter != null && occurrenceTime.isAfter(medicine.hideAfter!)) isHidden = true;
+          bool isHidden = false;
+          if (medicine.hideBefore != null &&
+              occurrenceTime.isBefore(medicine.hideBefore!))
+            isHidden = true;
+          if (medicine.hideAfter != null &&
+              occurrenceTime.isAfter(medicine.hideAfter!))
+            isHidden = true;
 
-           bool isDeleted = medicine.deletedOccurrences.any((dt) => 
-               dt.year == occurrenceTime.year && 
-               dt.month == occurrenceTime.month && 
-               dt.day == occurrenceTime.day &&
-               dt.hour == occurrenceTime.hour &&
-               dt.minute == occurrenceTime.minute
-           );
+          bool isDeleted = medicine.deletedOccurrences.any(
+            (dt) =>
+                dt.year == occurrenceTime.year &&
+                dt.month == occurrenceTime.month &&
+                dt.day == occurrenceTime.day &&
+                dt.hour == occurrenceTime.hour &&
+                dt.minute == occurrenceTime.minute,
+          );
 
-           if (!isHidden && !isDeleted) {
-             expectedCount++;
-           }
+          if (!isHidden && !isDeleted) {
+            expectedCount++;
+          }
         }
         current = current.add(const Duration(days: 1));
       }
     }
 
     // Missed = what was expected MINUS what was taken. (Can't be negative)
-    missedCount = (expectedCount - takenCount) > 0 ? (expectedCount - takenCount) : 0;
+    missedCount = (expectedCount - takenCount) > 0
+        ? (expectedCount - takenCount)
+        : 0;
 
     return Container(
       decoration: BoxDecoration(
@@ -281,12 +319,14 @@ class _MedicineReportSheet extends StatelessWidget {
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.2),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondaryContainer.withOpacity(0.2),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.medication, 
-                          size: 48, 
+                          Icons.medication,
+                          size: 48,
                           color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
@@ -301,15 +341,18 @@ class _MedicineReportSheet extends StatelessWidget {
                     Text(
                       'Dosage: ${medicine.dosage}',
                       style: TextStyle(
-                        fontSize: 16, 
-                        color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.6),
+                        fontSize: 16,
+                        color:
+                            (Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black)
+                                .withOpacity(0.6),
                       ),
                     ),
                     const SizedBox(height: 24),
                   ],
                 ),
               ),
-              
+
               // Stats Cards
               SliverToBoxAdapter(
                 child: Row(
@@ -334,9 +377,9 @@ class _MedicineReportSheet extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               const SliverToBoxAdapter(child: SizedBox(height: 24)),
-              
+
               // Timeline details
               SliverToBoxAdapter(
                 child: Container(
@@ -344,7 +387,9 @@ class _MedicineReportSheet extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
                   ),
                   child: Column(
                     children: [
@@ -359,7 +404,9 @@ class _MedicineReportSheet extends StatelessWidget {
                       ),
                       _TimelineRow(
                         title: 'Ends',
-                        value: endDate != null ? onlyDateFormat.format(endDate) : 'Ongoing indefinitely',
+                        value: endDate != null
+                            ? onlyDateFormat.format(endDate)
+                            : 'Ongoing indefinitely',
                         icon: Icons.stop_circle_rounded,
                       ),
                       const Padding(
@@ -368,32 +415,31 @@ class _MedicineReportSheet extends StatelessWidget {
                       ),
                       _TimelineRow(
                         title: 'Frequency',
-                        value: medicine.isInterval && medicine.intervalHours != null
+                        value:
+                            medicine.isInterval &&
+                                medicine.intervalHours != null
                             ? 'Every ${medicine.intervalHours} hours'
-                            : 'Daily at ${medicine.fixedTime != null ? timeFormat.format(DateTime(0,1,1,medicine.fixedTime!.hour, medicine.fixedTime!.minute)) : timeFormat.format(initialSchedule)}',
+                            : 'Daily at ${medicine.fixedTime != null ? timeFormat.format(DateTime(0, 1, 1, medicine.fixedTime!.hour, medicine.fixedTime!.minute)) : timeFormat.format(initialSchedule)}',
                         icon: Icons.repeat_rounded,
                       ),
                     ],
                   ),
                 ),
               ),
-              
+
               const SliverToBoxAdapter(child: SizedBox(height: 24)),
-              
+
               // History List Title
               const SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
                   child: Text(
                     'Intake History',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-              
+
               // History List Items
               if (sortedHistory.isEmpty)
                 SliverToBoxAdapter(
@@ -403,7 +449,10 @@ class _MedicineReportSheet extends StatelessWidget {
                       child: Text(
                         'No history recorded yet.',
                         style: TextStyle(
-                          color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.5),
+                          color:
+                              (Theme.of(context).textTheme.bodyLarge?.color ??
+                                      Colors.black)
+                                  .withOpacity(0.5),
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -412,38 +461,72 @@ class _MedicineReportSheet extends StatelessWidget {
                 )
               else
                 SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final historyDate = sortedHistory[index];
-                      return ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
-                        leading: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF10B981).withOpacity(0.1),
-                            shape: BoxShape.circle,
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final historyDate = sortedHistory[index];
+                    final exactTime =
+                        medicine.exactTakenTimes[historyDate
+                            .toIso8601String()] ??
+                        historyDate;
+                    return ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 0,
+                      ),
+                      leading: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981).withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.check_rounded,
+                          color: Color(0xFF10B981),
+                        ),
+                      ),
+                      title: Text(
+                        onlyDateFormat.format(exactTime),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            timeFormat.format(exactTime),
+                            style: TextStyle(
+                              color:
+                                  (Theme.of(
+                                            context,
+                                          ).textTheme.bodyLarge?.color ??
+                                          Colors.black)
+                                      .withOpacity(0.9),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
                           ),
-                          child: const Icon(Icons.check_rounded, color: Color(0xFF10B981)),
-                        ),
-                        title: Text(
-                          onlyDateFormat.format(historyDate),
-                          style: const TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        trailing: Text(
-                          timeFormat.format(historyDate),
-                          style: TextStyle(
-                            color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.6),
-                            fontWeight: FontWeight.w500,
+                          Text(
+                            'Planned: ${timeFormat.format(historyDate)}',
+                            style: TextStyle(
+                              color:
+                                  (Theme.of(
+                                            context,
+                                          ).textTheme.bodyLarge?.color ??
+                                          Colors.black)
+                                      .withOpacity(0.5),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 11,
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    childCount: sortedHistory.length,
-                  ),
+                        ],
+                      ),
+                    );
+                  }, childCount: sortedHistory.length),
                 ),
-                
-              const SliverToBoxAdapter(child: SizedBox(height: 40)), // Bottom padding
+
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 40),
+              ), // Bottom padding
             ],
           );
         },
@@ -458,7 +541,12 @@ class _ReportStatCard extends StatelessWidget {
   final IconData icon;
   final Color color;
 
-  const _ReportStatCard({required this.title, required this.value, required this.icon, required this.color});
+  const _ReportStatCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -503,7 +591,11 @@ class _TimelineRow extends StatelessWidget {
   final String value;
   final IconData icon;
 
-  const _TimelineRow({required this.title, required this.value, required this.icon});
+  const _TimelineRow({
+    required this.title,
+    required this.value,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -515,7 +607,11 @@ class _TimelineRow extends StatelessWidget {
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, size: 18, color: Theme.of(context).colorScheme.primary),
+          child: Icon(
+            icon,
+            size: 18,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         const SizedBox(width: 12),
         Column(
@@ -525,16 +621,16 @@ class _TimelineRow extends StatelessWidget {
               title,
               style: TextStyle(
                 fontSize: 13,
-                color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.5),
+                color:
+                    (Theme.of(context).textTheme.bodyLarge?.color ??
+                            Colors.black)
+                        .withOpacity(0.5),
               ),
             ),
             const SizedBox(height: 2),
             Text(
               value,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
           ],
         ),

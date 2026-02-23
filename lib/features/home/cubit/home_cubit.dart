@@ -171,6 +171,7 @@ class HomeCubit extends Cubit<HomeState> {
     
     // We need to save to Hive, using the specific occurrence time
     realMedicine.history.add(medicine.startTime);
+    realMedicine.exactTakenTimes[medicine.startTime.toIso8601String()] = DateTime.now();
     await realMedicine.save();
     
     // Refresh list
@@ -203,6 +204,7 @@ class HomeCubit extends Cubit<HomeState> {
       }
     }
     
+    realMedicine.exactTakenTimes.remove(medicine.startTime.toIso8601String());
     await realMedicine.save();
     
     if (state is HomeLoaded) {

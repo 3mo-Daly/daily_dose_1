@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../home/cubit/home_cubit.dart';
 import '../../profile/cubit/profile_cubit.dart';
 import '../../profile/cubit/profile_state.dart';
+import '../../../core/theme/theme_cubit.dart';
 import '../../../core/theme/app_theme.dart';
 
 class ProfileHeader extends StatelessWidget {
@@ -12,101 +13,105 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProfileCubit, ProfileState>(
-      builder: (context, state) {
-        if (state is ProfileLoaded) {
-          return SizedBox(
-            height: 120, // Increased height to prevent bottom overflow
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: state.profiles.length + 1, // +1 for Add button
-              itemBuilder: (context, index) {
-                if (index == state.profiles.length) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                    child: Column(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            // Implement add profile dialog
-                            _showAddProfileDialog(context);
-                          },
-                          borderRadius: BorderRadius.circular(30),
-                          child: Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Theme.of(context).colorScheme.primaryContainer,
-                            ),
-                            child: Icon(Icons.add_rounded, color: Theme.of(context).colorScheme.primary, size: 28),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text('Add', style: TextStyle(color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.7), fontWeight: FontWeight.w500)),
-                      ],
-                    ),
-                  );
-                }
-
-                final profile = state.profiles[index];
-                final isSelected = profile.id == state.selectedProfileId;
-
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                  child: Column(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          context.read<ProfileCubit>().selectProfile(
-                            profile.id,
-                          );
-                        },
-                        onLongPress: () {
-                          _showEditDeleteOptions(context, profile);
-                        },
-                        borderRadius: BorderRadius.circular(30),
-                        child: Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isSelected
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Colors.transparent,
-                              width: 3,
-                            ),
-                            image: profile.avatarPath != null ? DecorationImage(image: FileImage(File(profile.avatarPath!)), fit: BoxFit.cover) : null,
-                          ),
-                          child: profile.avatarPath == null
-                            ? Center(
-                                child: Text(
-                                  profile.name.isNotEmpty ? profile.name[0].toUpperCase() : 'U',
-                                  style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, themeMode) {
+        return BlocBuilder<ProfileCubit, ProfileState>(
+          builder: (context, state) {
+            if (state is ProfileLoaded) {
+              return SizedBox(
+                height: 120, // Increased height to prevent bottom overflow
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: state.profiles.length + 1, // +1 for Add button
+                  itemBuilder: (context, index) {
+                    if (index == state.profiles.length) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                        child: Column(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                // Implement add profile dialog
+                                _showAddProfileDialog(context);
+                              },
+                              borderRadius: BorderRadius.circular(30),
+                              child: Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context).colorScheme.primaryContainer,
                                 ),
-                              )
-                            : null,
+                                child: Icon(Icons.add_rounded, color: Theme.of(context).colorScheme.primary, size: 28),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text('Add', style: TextStyle(color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.7), fontWeight: FontWeight.w500)),
+                          ],
                         ),
+                      );
+                    }
+
+                    final profile = state.profiles[index];
+                    final isSelected = profile.id == state.selectedProfileId;
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                      child: Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              context.read<ProfileCubit>().selectProfile(
+                                profile.id,
+                              );
+                            },
+                            onLongPress: () {
+                              _showEditDeleteOptions(context, profile);
+                            },
+                            borderRadius: BorderRadius.circular(30),
+                            child: Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Colors.transparent,
+                                  width: 3,
+                                ),
+                                image: profile.avatarPath != null ? DecorationImage(image: FileImage(File(profile.avatarPath!)), fit: BoxFit.cover) : null,
+                              ),
+                              child: profile.avatarPath == null
+                                ? Center(
+                                    child: Text(
+                                      profile.name.isNotEmpty ? profile.name[0].toUpperCase() : 'U',
+                                      style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
+                                    ),
+                                  )
+                                : null,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            profile.name,
+                            style: TextStyle(
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        profile.name,
-                        style: TextStyle(
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          );
-        }
-        return const SizedBox.shrink();
+                    );
+                  },
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        );
       },
     );
   }
