@@ -37,7 +37,7 @@ class ProfileHeader extends StatelessWidget {
                             height: 60,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.10),
+                              color: Theme.of(context).colorScheme.primaryContainer,
                             ),
                             child: Icon(Icons.add_rounded, color: Theme.of(context).colorScheme.primary, size: 28),
                           ),

@@ -26,6 +26,13 @@ final ThemeData appTheme = ThemeData(
     secondary: AppColors.accent,
     surface: AppColors.surface,
     background: AppColors.background,
+    surfaceContainerHighest: AppColors.text.withOpacity(0.05),
+    secondaryContainer: AppColors.surface,
+    onSecondaryContainer: AppColors.text,
+    outline: AppColors.text.withOpacity(0.5),
+    outlineVariant: AppColors.text.withOpacity(0.15),
+    onSurfaceVariant: AppColors.text.withOpacity(0.6),
+    primaryContainer: AppColors.primary.withOpacity(0.10),
   ),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: AppColors.text),
@@ -55,11 +62,17 @@ final ThemeData appTheme = ThemeData(
 class AppDarkColors {
   static const Color primary = Color(0xFF82CBAE); // Soft Sage
   static const Color accent = Color(0xFF82CBAE);  // Soft Sage
-  static const Color background = Color(0xFF16201E); // Dark Pine
+  static const Color background = Color(0xFF121A19); // Dark Pine
   static const Color surface = Color(0xFF1E2A28); // Elevated Pine
-  static const Color text = Color(0xFFF0F4F4); // Ice White
+  static const Color text = Color(0xFFF4F9F8); // Ice White
   static const Color textSecondary = Color(0xFF8E9E9B); // Muted Grey-Green
   static const Color inputFill = Color(0xFF1A2523); // Input Field Background
+  
+  static const Color surfaceVariant = Color(0xFF2A3A37); // Seg Tab Bar Container / Add Profile Container
+  static const Color onPrimaryActiveText = Color(0xFF121A19);
+  static const Color inactiveTabText = Color(0xFFA5BDB9);
+  static const Color navInactive = Color(0xFFB0C4C1);
+  static const Color emptyIllustration = Color(0xFF4A625D);
 }
 
 final ThemeData darkAppTheme = ThemeData(
@@ -73,7 +86,13 @@ final ThemeData darkAppTheme = ThemeData(
     background: AppDarkColors.background,
     brightness: Brightness.dark,
     onSurface: AppDarkColors.text,
-    onSurfaceVariant: AppDarkColors.textSecondary,
+    onSurfaceVariant: AppDarkColors.navInactive,
+    surfaceContainerHighest: AppDarkColors.surfaceVariant,
+    secondaryContainer: AppDarkColors.primary,
+    onSecondaryContainer: AppDarkColors.onPrimaryActiveText,
+    outline: AppDarkColors.inactiveTabText,
+    outlineVariant: AppDarkColors.emptyIllustration,
+    primaryContainer: AppDarkColors.surfaceVariant,
   ),
   appBarTheme: const AppBarTheme(
     backgroundColor: AppDarkColors.background,
