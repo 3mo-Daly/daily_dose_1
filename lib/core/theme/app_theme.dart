@@ -50,3 +50,57 @@ final ThemeData appTheme = ThemeData(
     ),
   ),
 );
+
+// Modern Clinic Dark Theme Palette
+class AppDarkColors {
+  static const Color primary = Color(0xFF82CBAE); // Soft Sage
+  static const Color accent = Color(0xFF82CBAE);  // Soft Sage
+  static const Color background = Color(0xFF16201E); // Dark Pine
+  static const Color surface = Color(0xFF1E2A28); // Elevated Pine
+  static const Color text = Color(0xFFF0F4F4); // Ice White
+  static const Color textSecondary = Color(0xFF8E9E9B); // Muted Grey-Green
+  static const Color inputFill = Color(0xFF1A2523); // Input Field Background
+}
+
+final ThemeData darkAppTheme = ThemeData(
+  useMaterial3: true,
+  scaffoldBackgroundColor: AppDarkColors.background,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: AppDarkColors.primary,
+    primary: AppDarkColors.primary,
+    secondary: AppDarkColors.accent,
+    surface: AppDarkColors.surface,
+    background: AppDarkColors.background,
+    brightness: Brightness.dark,
+    onSurface: AppDarkColors.text,
+    onSurfaceVariant: AppDarkColors.textSecondary,
+  ),
+  appBarTheme: const AppBarTheme(
+    backgroundColor: AppDarkColors.background,
+    foregroundColor: AppDarkColors.text,
+    elevation: 0,
+    centerTitle: true,
+  ),
+  textTheme: const TextTheme(
+    bodyLarge: TextStyle(color: AppDarkColors.text),
+    bodyMedium: TextStyle(color: AppDarkColors.text),
+    titleLarge: TextStyle(color: AppDarkColors.text, fontWeight: FontWeight.bold),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: AppDarkColors.inputFill,
+    hintStyle: const TextStyle(color: AppDarkColors.textSecondary),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: BorderSide.none,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: BorderSide.none,
+    ),
+  ),
+);

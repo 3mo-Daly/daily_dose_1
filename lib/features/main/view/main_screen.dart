@@ -26,38 +26,37 @@ class _MainScreenState extends State<MainScreen> {
       ),
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
-          indicatorColor: AppColors.primary.withOpacity(0.12),
+          indicatorColor: Theme.of(context).colorScheme.primary.withOpacity(0.12),
           labelTextStyle: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700, fontSize: 13);
+              return TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w700, fontSize: 13);
             }
-            return TextStyle(color: AppColors.text, fontWeight: FontWeight.w500, fontSize: 12);
+            return TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500, fontSize: 12);
           }),
         ),
         child: NavigationBar(
-          backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : AppColors.surface,
-          elevation: 20,
-          shadowColor: AppColors.text.withOpacity(0.2),
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          elevation: 0,
           selectedIndex: _currentIndex,
-          destinations: const [
+          destinations: [
             NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home_rounded, color: AppColors.primary),
+              icon: const Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home_rounded, color: Theme.of(context).colorScheme.primary),
               label: 'Home',
             ),
             NavigationDestination(
-              icon: Icon(Icons.add_circle_outline),
-              selectedIcon: Icon(Icons.add_circle, color: AppColors.primary),
+              icon: const Icon(Icons.add_circle_outline),
+              selectedIcon: Icon(Icons.add_circle, color: Theme.of(context).colorScheme.primary),
               label: 'Add',
             ),
             NavigationDestination(
-              icon: Icon(Icons.delete_outline),
-              selectedIcon: Icon(Icons.delete, color: AppColors.primary),
+              icon: const Icon(Icons.delete_outline),
+              selectedIcon: Icon(Icons.delete, color: Theme.of(context).colorScheme.primary),
               label: 'Delete',
             ),
             NavigationDestination(
-              icon: Icon(Icons.bar_chart_outlined),
-              selectedIcon: Icon(Icons.bar_chart_rounded, color: AppColors.primary),
+              icon: const Icon(Icons.bar_chart_outlined),
+              selectedIcon: Icon(Icons.bar_chart_rounded, color: Theme.of(context).colorScheme.primary),
               label: 'Report',
             ),
           ],

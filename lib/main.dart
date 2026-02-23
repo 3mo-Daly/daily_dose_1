@@ -80,30 +80,7 @@ class MyApp extends StatelessWidget {
             title: 'The Daily Dose',
             debugShowCheckedModeBanner: false,
             theme: appTheme, // Using customized light AppTheme from specifications
-            darkTheme: ThemeData( // Keep dark theme distinct but using base Material 3 rules
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: AppColors.primary,
-                primary: AppColors.primary,
-                secondary: AppColors.accent,
-                surface: const Color(0xFF1E1E1E),
-                brightness: Brightness.dark,
-              ),
-              useMaterial3: true,
-              scaffoldBackgroundColor: const Color(0xFF121212),
-              appBarTheme: const AppBarTheme(
-                centerTitle: true,
-                elevation: 0,
-                backgroundColor: Color(0xFF121212),
-                foregroundColor: Colors.white,
-              ),
-              inputDecorationTheme: InputDecorationTheme(
-                filled: true,
-                fillColor: const Color(0xFF1E1E1E),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-              ),
-            ),
+            darkTheme: darkAppTheme, // Using Modern Clinic Dark Theme
             themeMode: themeMode,
             home: const MainScreen(),
           );

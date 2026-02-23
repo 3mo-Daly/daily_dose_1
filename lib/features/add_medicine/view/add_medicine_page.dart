@@ -84,13 +84,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                       width: 88,
                       height: 88,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : AppColors.surface,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: Theme.of(context).brightness == Brightness.dark ? null : AppColors.softShadow,
                         image: _imagePath != null ? DecorationImage(image: FileImage(File(_imagePath!)), fit: BoxFit.cover) : null,
                       ),
                       child: _imagePath == null
-                        ? Icon(Icons.image_outlined, color: AppColors.text.withOpacity(0.3), size: 32)
+                        ? Icon(Icons.image_outlined, color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.3), size: 32)
                         : null,
                     ),
                   ),
@@ -116,7 +116,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                 const SizedBox(height: 24),
                 Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : AppColors.surface,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: Theme.of(context).brightness == Brightness.dark ? null : AppColors.softShadow,
                   ),
@@ -130,14 +130,15 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Start Time", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                              Row(
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(DateFormat.jm().format(_startTime), style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.primary, fontSize: 15)),
-                                  const SizedBox(width: 8),
-                                  Icon(Icons.access_time_filled_rounded, color: AppColors.primary.withOpacity(0.8), size: 22),
+                                  const Text('Start Time', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
+                                  const SizedBox(height: 4),
+                                  Text(DateFormat.jm().format(_startTime), style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 15)),
                                 ],
                               ),
+                              Icon(Icons.access_time_filled_rounded, color: Theme.of(context).colorScheme.primary.withOpacity(0.8), size: 22),
                             ],
                           ),
                         ),
@@ -153,11 +154,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                               children: [
                                 Switch(
                                   value: _isInterval,
-                                  activeColor: AppColors.primary,
-                                  onChanged: (val) => setState(() => _isInterval = val),
+                                  onChanged: (val) {
+                                    setState(() => _isInterval = val);
+                                  },
+                                  activeColor: Theme.of(context).colorScheme.primary,
                                 ),
                                 const SizedBox(width: 8),
-                                Icon(Icons.repeat_rounded, color: AppColors.primary.withOpacity(0.8), size: 22),
+                                Icon(Icons.repeat_rounded, color: Theme.of(context).colorScheme.primary.withOpacity(0.8), size: 22),
                               ],
                             ),
                           ],
@@ -176,14 +179,18 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                                   child: DropdownButton<int>(
                                     alignment: Alignment.centerRight,
                                     isExpanded: true,
-                                    icon: Icon(Icons.arrow_drop_down, color: AppColors.primary.withOpacity(0.8)),
+                                    isDense: true,
+                                    icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).colorScheme.primary.withOpacity(0.8)),
+                                    underline: const SizedBox(),
                                     value: _intervalHours,
-                                    items: [4, 6, 8, 12, 24].map((e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Align(alignment: Alignment.centerRight, child: Text('Every $e hours', style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.primary, fontSize: 15))),
-                                    )).toList(),
+                                    items: [4, 6, 8, 12, 24].map((e) {
+                                      return DropdownMenuItem(
+                                        value: e,
+                                        child: Align(alignment: Alignment.centerRight, child: Text('Every $e hours', style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 15))),
+                                      );
+                                    }).toList(),
                                     onChanged: (val) => setState(() => _intervalHours = val),
-                                    hint: const Align(alignment: Alignment.centerRight, child: Text("Select", style: TextStyle(color: AppColors.primary))),
+                                    hint: Align(alignment: Alignment.centerRight, child: Text("Select", style: TextStyle(color: Theme.of(context).colorScheme.primary))),
                                   ),
                                 ),
                               ),
@@ -210,18 +217,17 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                 ),
                 const SizedBox(height: 32),
                 SizedBox(
-                  width: double.infinity,
-                  height: 56,
                   child: ElevatedButton(
+                    onPressed: _submit,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    onPressed: _submit,
                     child: const Text('Save Medicine', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
                   ),
                 ),

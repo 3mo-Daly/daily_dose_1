@@ -37,13 +37,13 @@ class ProfileHeader extends StatelessWidget {
                             height: 60,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: AppColors.primary.withOpacity(0.10),
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.10),
                             ),
-                            child: const Icon(Icons.add_rounded, color: AppColors.primary, size: 28),
+                            child: Icon(Icons.add_rounded, color: Theme.of(context).colorScheme.primary, size: 28),
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text('Add', style: TextStyle(color: AppColors.text.withOpacity(0.7), fontWeight: FontWeight.w500)),
+                        Text('Add', style: TextStyle(color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.7), fontWeight: FontWeight.w500)),
                       ],
                     ),
                   );
@@ -73,7 +73,7 @@ class ProfileHeader extends StatelessWidget {
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: isSelected
-                                  ? AppColors.primary
+                                  ? Theme.of(context).colorScheme.primary
                                   : Colors.transparent,
                               width: 3,
                             ),
@@ -83,7 +83,7 @@ class ProfileHeader extends StatelessWidget {
                             ? Center(
                                 child: Text(
                                   profile.name.isNotEmpty ? profile.name[0].toUpperCase() : 'U',
-                                  style: const TextStyle(fontSize: 20, color: AppColors.primary, fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
                                 ),
                               )
                             : null,
@@ -93,7 +93,7 @@ class ProfileHeader extends StatelessWidget {
                       Text(
                         profile.name,
                         style: TextStyle(
-                          color: AppColors.text,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontWeight: isSelected
                               ? FontWeight.bold
                               : FontWeight.w500,

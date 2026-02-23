@@ -231,13 +231,13 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             Icon(
                               Icons.medication_liquid_rounded,
                               size: 80,
-                              color: AppColors.text.withOpacity(0.15),
+                              color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.15),
                             ),
                             const SizedBox(height: 16),
                             Text(
                               "No medicines for this day",
                               style: TextStyle(
-                                color: AppColors.text.withOpacity(0.7),
+                                color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.7),
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -752,7 +752,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: isActive
               ? BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2C2C2C) : AppColors.surface,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: Theme.of(context).brightness == Brightness.dark ? null : AppColors.softShadow,
                 )
@@ -761,7 +761,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
           child: Text(
             title,
             style: TextStyle(
-              color: isActive ? AppColors.text : AppColors.text.withOpacity(0.5),
+              color: isActive ? Theme.of(context).textTheme.bodyLarge?.color : (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.5),
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
               fontSize: 14,
             ),
@@ -791,7 +791,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : AppColors.text.withOpacity(0.05),
+        color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).inputDecorationTheme.fillColor : (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.05),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
