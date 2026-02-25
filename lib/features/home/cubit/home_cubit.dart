@@ -160,6 +160,151 @@ class HomeCubit extends Cubit<HomeState> {
     return results;
   }
 
+  int getUncompletedCountForProfile(String profileId) {
+    int count = 0;
+    final now = DateTime.now();
+    final allMedicines = medicineBox.values.where((m) => m.profileId == profileId).toList();
+
+    for (var medicine in allMedicines) {
+      if (medicine.durationDays != null) {
+        final endDate = medicine.startTime.add(Duration(days: medicine.durationDays!));
+        // We only care about occurrences up to 'now', or 'endDate' if it's already past
+        final calcEnd = endDate.isBefore(now) ? endDate : now;
+        count += _getUncompletedOccurrencesForMedicine(medicine, calcEnd, now);
+      } else {
+        count += _getUncompletedOccurrencesForMedicine(medicine, now, now);
+      }
+    }
+    return count;
+  }
+
+  int _getUncompletedOccurrencesForMedicine(Medicine medicine, DateTime targetEndTime, DateTime now) {
+    int count = 0;
+    
+    if (!medicine.isInterval) {
+      if (medicine.fixedTime == null) return 0;
+      
+      DateTime current = DateTime(medicine.startTime.year, medicine.startTime.month, medicine.startTime.day);
+      final finalEndDay = DateTime(targetEndTime.year, targetEndTime.month, targetEndTime.day);
+
+      while (!current.isAfter(finalEndDay)) {
+        final occurrenceTime = DateTime(
+          current.year, current.month, current.day,
+          medicine.fixedTime!.hour, medicine.fixedTime!.minute
+        );
+
+        if (!occurrenceTime.isAfter(targetEndTime)) {
+          if (_isOccurrenceValidAndUncompleted(medicine, occurrenceTime, now)) {
+            count++;
+          }
+        }
+        current = current.add(const Duration(days: 1));
+      }
+    } else {
+      if (medicine.intervalHours == null) return 0;
+      
+      DateTime currentOccurrence = medicine.startTime;
+      int occurrenceIndex = 0;
+
+      // Optimize: Skip to first valid occurrence if very far in the past? 
+      // Actually we need to check history for each to know if it's taken.
+
+      while (!currentOccurrence.isAfter(targetEndTime)) {
+        if (_isOccurrenceValidAndUncompletedInterval(medicine, currentOccurrence, occurrenceIndex, now)) {
+          count++;
+        }
+        currentOccurrence = currentOccurrence.add(Duration(hours: medicine.intervalHours!));
+        occurrenceIndex++;
+      }
+    }
+    
+    return count;
+  }
+
+  bool _isOccurrenceValidAndUncompleted(Medicine medicine, DateTime occurrenceTime, DateTime now) {
+    if (medicine.hideBefore != null && occurrenceTime.isBefore(medicine.hideBefore!)) return false;
+    if (medicine.hideAfter != null && occurrenceTime.isAfter(medicine.hideAfter!)) return false;
+
+    bool isDeleted = medicine.deletedOccurrences.any((dt) => 
+        dt.year == occurrenceTime.year && dt.month == occurrenceTime.month && 
+        dt.day == occurrenceTime.day && dt.hour == occurrenceTime.hour && dt.minute == occurrenceTime.minute
+    );
+    if (isDeleted) return false;
+
+    bool isTaken = medicine.history.any((dt) => 
+        dt.year == occurrenceTime.year && dt.month == occurrenceTime.month && dt.day == occurrenceTime.day
+    );
+    
+    // We want to count it if it's NOT taken, AND it's either in the past (Missed) or within the last 30 minutes / current (Time to take)
+    // Actually, the prompt says "time to take" + "missed". 
+    // "Missed" = occurrenceTime + 30 mins is before now.
+    // "Time to take" = occurrenceTime is before now, and now is before occurrenceTime + 30 mins.
+    // OR we can just say: if occurrenceTime is before `now`, and it's not taken, it's either missed or time to take.
+    // WAIT: in MedicineCard, "Time to take" means `!isFuture && !isPassed`. 
+    // isFuture = now.isBefore(startTime). 
+    // So if now is AFTER or EQUAL to startTime, it's either "Time to take" or "Missed".
+    // Therefore, an occurrence is "badge-worthy" if:
+    // 1. It is NOT taken.
+    // 2. now.isAfter(occurrenceTime) (meaning it's past the exact start time, so it's due now or missed)
+    
+    if (!isTaken && (now.isAfter(occurrenceTime) || now.isAtSameMomentAs(occurrenceTime))) {
+      return true;
+    }
+    return false;
+  }
+
+  bool _isOccurrenceValidAndUncompletedInterval(Medicine medicine, DateTime occurrenceTime, int occurrenceIndex, DateTime now) {
+    if (medicine.hideBefore != null && occurrenceTime.isBefore(medicine.hideBefore!)) return false;
+    if (medicine.hideAfter != null && occurrenceTime.isAfter(medicine.hideAfter!)) return false;
+
+    bool isDeleted = medicine.deletedOccurrences.any((dt) => 
+        dt.year == occurrenceTime.year && dt.month == occurrenceTime.month && 
+        dt.day == occurrenceTime.day && dt.hour == occurrenceTime.hour && dt.minute == occurrenceTime.minute
+    );
+    if (isDeleted) return false;
+
+    final historyOnDay = medicine.history.where((dt) => 
+        dt.year == occurrenceTime.year && dt.month == occurrenceTime.month && dt.day == occurrenceTime.day
+    ).toList();
+    
+    // We only care if this specific occurrence index on this day is taken.
+    // Wait, interval tracking in UI uses a total count per day.
+    // Let's count how many occurrences happen on this specific day up to 'now'.
+    // Actually, `occurrenceIndex` is global from startTime. The UI `_generateForDate` resets `occurrenceIndex` to 0 per day, which might be a bug or design choice in `_generateForDate`.
+    // Let's look at `_generateForDate` for interval:
+    // It does `int occurrenceIndex = 0;` at the start of the day.
+    // So if it's the 1st occurrence of the day, it checks if `historyToday.length > 0`.
+    
+    int indexForToday = _getIndexForToday(medicine, occurrenceTime);
+    bool isTaken = indexForToday < historyOnDay.length;
+
+    if (!isTaken && (now.isAfter(occurrenceTime) || now.isAtSameMomentAs(occurrenceTime))) {
+      return true;
+    }
+    return false;
+  }
+
+  int _getIndexForToday(Medicine medicine, DateTime occurrenceTime) {
+     final targetDate = DateTime(occurrenceTime.year, occurrenceTime.month, occurrenceTime.day);
+     DateTime current = medicine.startTime;
+     
+     if (current.isBefore(targetDate)) {
+        final diffHours = targetDate.difference(current).inHours;
+        int intervals = (diffHours / medicine.intervalHours!).floor();
+        current = current.add(Duration(hours: intervals * medicine.intervalHours!));
+        while (current.isBefore(targetDate)) {
+           current = current.add(Duration(hours: medicine.intervalHours!));
+        }
+     }
+     
+     int idx = 0;
+     while (current.isBefore(occurrenceTime)) {
+       current = current.add(Duration(hours: medicine.intervalHours!));
+       idx++;
+     }
+     return idx;
+  }
+
   Future<void> markAsTaken(Medicine medicine) async {
     // We don't delete the medicine, just upate history. 
     // The UI will refresh and filter it out.

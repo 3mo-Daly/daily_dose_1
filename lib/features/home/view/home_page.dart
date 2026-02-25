@@ -30,6 +30,11 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _loadMedicines();
+    });
+
     // Refresh the UI periodically so MedicineCard statuses update automatically
     _refreshTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
       if (mounted) setState(() {});

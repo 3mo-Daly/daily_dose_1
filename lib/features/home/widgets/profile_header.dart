@@ -70,27 +70,63 @@ class ProfileHeader extends StatelessWidget {
                               _showEditDeleteOptions(context, profile);
                             },
                             borderRadius: BorderRadius.circular(30),
-                            child: Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: isSelected
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Colors.transparent,
-                                  width: 3,
-                                ),
-                                image: profile.avatarPath != null ? DecorationImage(image: FileImage(File(profile.avatarPath!)), fit: BoxFit.cover) : null,
-                              ),
-                              child: profile.avatarPath == null
-                                ? Center(
-                                    child: Text(
-                                      profile.name.isNotEmpty ? profile.name[0].toUpperCase() : 'U',
-                                      style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
+                            child: Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Container(
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? Theme.of(context).colorScheme.primary
+                                          : Colors.transparent,
+                                      width: 3,
                                     ),
-                                  )
-                                : null,
+                                    image: profile.avatarPath != null ? DecorationImage(image: FileImage(File(profile.avatarPath!)), fit: BoxFit.cover) : null,
+                                  ),
+                                  child: profile.avatarPath == null
+                                    ? Center(
+                                        child: Text(
+                                          profile.name.isNotEmpty ? profile.name[0].toUpperCase() : 'U',
+                                          style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
+                                        ),
+                                      )
+                                    : null,
+                                ),
+                                Builder(
+                                  builder: (context) {
+                                    // Use context.watch to rebuild when HomeCubit state changes (e.g., medicine added/deleted/taken)
+                                    context.watch<HomeCubit>(); 
+                                    final count = context.read<HomeCubit>().getUncompletedCountForProfile(profile.id);
+                                    if (count > 0) {
+                                      return Positioned(
+                                        top: -2,
+                                        right: -2,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            shape: BoxShape.circle,
+                                            border: Border.all(color: Theme.of(context).scaffoldBackgroundColor, width: 2),
+                                          ),
+                                          child: Text(
+                                            count > 99 ? '99+' : count.toString(),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              height: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(height: 4),
