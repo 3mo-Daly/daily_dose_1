@@ -5,8 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../home/cubit/home_cubit.dart';
 import '../../profile/cubit/profile_cubit.dart';
 import '../../profile/cubit/profile_state.dart';
-import '../../../core/theme/theme_cubit.dart';
-import '../../../core/theme/app_theme.dart';
+import 'package:daily_dose/l10n/app_localizations.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key});
@@ -16,150 +15,45 @@ class ProfileHeader extends StatelessWidget {
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         if (state is ProfileLoaded) {
-          return BlocBuilder<ThemeCubit, ThemeMode>(
-            builder: (context, themeMode) {
-              return SizedBox(
-                key: ValueKey(themeMode), // Force rebuild on theme change
-                height: 120, // Increased height to prevent bottom overflow
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: state.profiles.length + 1, // +1 for Add button
-                  itemBuilder: (context, index) {
-                    if (index == state.profiles.length) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                        child: Column(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                // Implement add profile dialog
-                                _showAddProfileDialog(context);
-                              },
-                              borderRadius: BorderRadius.circular(30),
-                              child: Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Theme.of(context).colorScheme.primaryContainer,
-                                ),
-                                child: Icon(Icons.add_rounded, color: Theme.of(context).colorScheme.primary, size: 28),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text('Add', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7), fontWeight: FontWeight.w500)),
-                          ],
-                        ),
-                      );
-                    }
+          return SizedBox(
+            height: 120, // Increased height to prevent bottom overflow
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: state.profiles.length + 1, // +1 for Add button
+              itemBuilder: (context, index) {
+                if (index == state.profiles.length) {
+                  return const _AddProfileItem();
+                }
 
-                    final profile = state.profiles[index];
-                    final isSelected = profile.id == state.selectedProfileId;
+                final profile = state.profiles[index];
+                final isSelected = profile.id == state.selectedProfileId;
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                      child: Column(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              context.read<ProfileCubit>().selectProfile(
-                                profile.id,
-                              );
-                            },
-                            onLongPress: () {
-                              _showEditDeleteOptions(context, profile);
-                            },
-                            borderRadius: BorderRadius.circular(30),
-                            child: Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: isSelected
-                                          ? Theme.of(context).colorScheme.primary
-                                          : Colors.transparent,
-                                      width: 3,
-                                    ),
-                                    image: profile.avatarPath != null ? DecorationImage(image: FileImage(File(profile.avatarPath!)), fit: BoxFit.cover) : null,
-                                  ),
-                                  child: profile.avatarPath == null
-                                    ? Center(
-                                        child: Text(
-                                          profile.name.isNotEmpty ? profile.name[0].toUpperCase() : 'U',
-                                          style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
-                                        ),
-                                      )
-                                    : null,
-                                ),
-                                Builder(
-                                  builder: (context) {
-                                    // Use context.watch to rebuild when HomeCubit state changes (e.g., medicine added/deleted/taken)
-                                    context.watch<HomeCubit>(); 
-                                    final count = context.read<HomeCubit>().getUncompletedCountForProfile(profile.id);
-                                    if (count > 0) {
-                                      return Positioned(
-                                        top: -2,
-                                        right: -2,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            color: Colors.red,
-                                            shape: BoxShape.circle,
-                                            border: Border.all(color: Theme.of(context).scaffoldBackgroundColor, width: 2),
-                                          ),
-                                          child: Text(
-                                            count > 99 ? '99+' : count.toString(),
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              height: 1.0,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            profile.name,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
+                return _ProfileItem(
+                  profile: profile,
+                  isSelected: isSelected,
+                  onSelect: () =>
+                      context.read<ProfileCubit>().selectProfile(profile.id),
+                  onLongPress: () => _ProfileHeaderActions.showEditDeleteOptions(
+                      context, profile),
+                );
+              },
+            ),
           );
         }
         return const SizedBox.shrink();
       },
     );
   }
+}
 
-  void _showAddProfileDialog(BuildContext context) {
-    _showProfileDialog(context, isEditing: false);
+class _ProfileHeaderActions {
+  static void showAddProfileDialog(BuildContext context) {
+    showProfileDialog(context, isEditing: false);
   }
 
-  void _showEditDeleteOptions(
+  static void showEditDeleteOptions(
     BuildContext context,
-    dynamic profile, // Using dynamic to avoid importing profile explicitly here if it's already in scope, or just referencing the model
+    dynamic profile, 
   ) {
     showModalBottomSheet(
       context: context,
@@ -174,7 +68,7 @@ class ProfileHeader extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  'Manage Profile: ${profile.name}',
+                  AppLocalizations.of(context)!.manageProfile(profile.name),
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -183,18 +77,18 @@ class ProfileHeader extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.edit),
-                title: const Text('Edit Profile'),
+                title: Text(AppLocalizations.of(context)!.editProfile),
                 onTap: () {
                   Navigator.pop(ctx);
-                  _showProfileDialog(context, isEditing: true, profile: profile);
+                  _ProfileHeaderActions.showProfileDialog(context, isEditing: true, profile: profile);
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text('Delete Profile', style: TextStyle(color: Colors.red)),
+                title: Text(AppLocalizations.of(context)!.delete, style: const TextStyle(color: Colors.red)),
                 onTap: () {
                   Navigator.pop(ctx);
-                  _confirmDeleteProfile(context, profile);
+                  _ProfileHeaderActions.confirmDeleteProfile(context, profile);
                 },
               ),
               const SizedBox(height: 10),
@@ -205,18 +99,18 @@ class ProfileHeader extends StatelessWidget {
     );
   }
 
-  void _confirmDeleteProfile(BuildContext context, dynamic profile) {
+  static void confirmDeleteProfile(BuildContext context, dynamic profile) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Profile?'),
+        title: Text(AppLocalizations.of(context)!.deleteProfileTitle),
         content: Text(
-          'Are you sure you want to delete ${profile.name}? All medicines associated with this profile will be permanently wiped.',
+          AppLocalizations.of(context)!.deleteProfileContent(profile.name),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -224,14 +118,14 @@ class ProfileHeader extends StatelessWidget {
               context.read<ProfileCubit>().deleteProfile(profile.id);
               Navigator.pop(ctx);
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.delete, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
     );
   }
 
-  void _showProfileDialog(BuildContext context, {required bool isEditing, dynamic profile}) {
+  static void showProfileDialog(BuildContext context, {required bool isEditing, dynamic profile}) {
     final TextEditingController controller = TextEditingController(text: isEditing ? profile.name : '');
     String? pickedImagePath = isEditing ? profile.avatarPath : null;
 
@@ -241,7 +135,7 @@ class ProfileHeader extends StatelessWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text(isEditing ? 'Edit Profile' : 'Add Profile'),
+              title: Text(isEditing ? AppLocalizations.of(context)!.editProfile : AppLocalizations.of(context)!.addProfile),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -267,9 +161,9 @@ class ProfileHeader extends StatelessWidget {
                   const SizedBox(height: 16),
                   TextField(
                     controller: controller,
-                    decoration: const InputDecoration(
-                      labelText: 'Name',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.name,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                 ],
@@ -277,7 +171,7 @@ class ProfileHeader extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('Cancel'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 TextButton(
                   onPressed: () {
@@ -290,13 +184,161 @@ class ProfileHeader extends StatelessWidget {
                       Navigator.pop(ctx);
                     }
                   },
-                  child: Text(isEditing ? 'Save' : 'Add'),
+                  child: Text(isEditing ? AppLocalizations.of(context)!.save : AppLocalizations.of(context)!.add),
                 ),
               ],
             );
           },
         );
       },
+    );
+  }
+}
+
+class _AddProfileItem extends StatelessWidget {
+  const _AddProfileItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () {
+              _ProfileHeaderActions.showAddProfileDialog(context);
+            },
+            borderRadius: BorderRadius.circular(30),
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+              child: Icon(Icons.add_rounded,
+                  color: Theme.of(context).colorScheme.primary, size: 28),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(AppLocalizations.of(context)!.add,
+              style: TextStyle(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
+                  fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileItem extends StatelessWidget {
+  final dynamic profile;
+  final bool isSelected;
+  final VoidCallback onSelect;
+  final VoidCallback onLongPress;
+
+  const _ProfileItem({
+    required this.profile,
+    required this.isSelected,
+    required this.onSelect,
+    required this.onLongPress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      child: Column(
+        children: [
+          InkWell(
+            onTap: onSelect,
+            onLongPress: onLongPress,
+            borderRadius: BorderRadius.circular(30),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary
+                          : Colors.transparent,
+                      width: 3,
+                    ),
+                    image: profile.avatarPath != null
+                        ? DecorationImage(
+                            image: FileImage(File(profile.avatarPath!)),
+                            fit: BoxFit.cover)
+                        : null,
+                  ),
+                  child: profile.avatarPath == null
+                      ? Center(
+                          child: Text(
+                            profile.name.isNotEmpty
+                                ? profile.name[0].toUpperCase()
+                                : 'U',
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Theme.of(context).colorScheme.primary,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        )
+                      : null,
+                ),
+                Builder(
+                  builder: (context) {
+                    context.watch<HomeCubit>();
+                    final count = context
+                        .read<HomeCubit>()
+                        .getUncompletedCountForProfile(profile.id);
+                    if (count > 0) {
+                      return Positioned(
+                        top: -2,
+                        right: -2,
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                width: 2),
+                          ),
+                          child: Text(
+                            count > 99 ? '99+' : count.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              height: 1.0,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            profile.name,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

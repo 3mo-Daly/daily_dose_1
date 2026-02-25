@@ -3,6 +3,7 @@ import '../../home/view/home_page.dart';
 import '../../report/view/report_page.dart';
 import '../../all_medicines/view/all_medicines_page.dart';
 import '../../../core/theme/app_theme.dart';
+import 'package:daily_dose/l10n/app_localizations.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -47,27 +48,27 @@ class _MainScreenState extends State<MainScreen> {
             NavigationDestination(
               icon: const Icon(Icons.home_outlined),
               selectedIcon: Icon(Icons.home_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 28),
-              label: 'Home',
+              label: AppLocalizations.of(context)!.navHome,
             ),
             NavigationDestination(
               icon: const Icon(Icons.list_alt),
               selectedIcon: Icon(Icons.list_alt_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 28),
-              label: 'All',
+              label: AppLocalizations.of(context)!.navAll,
             ),
             NavigationDestination(
               icon: const Icon(Icons.add_circle_outline),
               selectedIcon: Icon(Icons.add_circle, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 28),
-              label: 'Add',
+              label: AppLocalizations.of(context)!.navAdd,
             ),
             NavigationDestination(
               icon: const Icon(Icons.delete_outline),
               selectedIcon: Icon(Icons.delete, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 28),
-              label: 'Delete',
+              label: AppLocalizations.of(context)!.navDelete,
             ),
             NavigationDestination(
               icon: const Icon(Icons.bar_chart_outlined),
               selectedIcon: Icon(Icons.bar_chart_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 28),
-              label: 'Report',
+              label: AppLocalizations.of(context)!.navReport,
             ),
           ],
           onDestinationSelected: (index) {

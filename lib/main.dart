@@ -8,8 +8,11 @@ import 'features/home/cubit/home_cubit.dart';
 import 'features/add_medicine/cubit/add_medicine_cubit.dart';
 import 'features/main/view/main_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:daily_dose/l10n/app_localizations.dart';
 import 'core/theme/theme_cubit.dart';
 import 'core/theme/app_theme.dart';
+import 'core/locale/locale_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -73,16 +76,29 @@ class MyApp extends StatelessWidget {
           ),
         ),
         BlocProvider(create: (_) => ThemeCubit()),
+        BlocProvider(create: (_) => LocaleCubit()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
-          return MaterialApp(
-            title: 'The Daily Dose',
-            debugShowCheckedModeBanner: false,
-            theme: appTheme, // Using customized light AppTheme from specifications
-            darkTheme: darkAppTheme, // Using Modern Clinic Dark Theme
-            themeMode: themeMode,
-            home: const MainScreen(),
+          return BlocBuilder<LocaleCubit, Locale>(
+            builder: (context, locale) {
+              return MaterialApp(
+                title: 'The Daily Dose',
+                debugShowCheckedModeBanner: false,
+                locale: locale,
+                localizationsDelegates: [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: AppLocalizations.supportedLocales,
+                theme: appTheme, // Using customized light AppTheme from specifications
+                darkTheme: darkAppTheme, // Using Modern Clinic Dark Theme
+                themeMode: themeMode,
+                home: const MainScreen(),
+              );
+            },
           );
         },
       ),

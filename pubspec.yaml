@@ -47,6 +47,8 @@ dependencies:
   path: ^1.9.1
   equatable: ^2.0.8
   flutter_timezone: ^5.0.1
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -100,3 +102,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  generate: true

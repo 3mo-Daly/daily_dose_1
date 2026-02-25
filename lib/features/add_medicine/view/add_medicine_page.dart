@@ -7,6 +7,7 @@ import '../cubit/add_medicine_cubit.dart';
 import '../cubit/add_medicine_state.dart';
 import '../../../models/medicine_model.dart';
 import '../../../core/theme/app_theme.dart';
+import 'package:daily_dose/l10n/app_localizations.dart';
 
 class AddMedicinePage extends StatefulWidget {
   final String profileId;
@@ -59,7 +60,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.medicine != null ? 'Edit Medicine' : 'Add Medicine')),
+      appBar: AppBar(title: Text(widget.medicine != null ? AppLocalizations.of(context)!.editMedicineTitle : AppLocalizations.of(context)!.addMedicineTitle)),
       body: BlocListener<AddMedicineCubit, AddMedicineState>(
         listener: (context, state) {
           if (state is AddMedicineSuccess) {
@@ -98,20 +99,20 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Medicine Name',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.medicineName,
+                    border: const OutlineInputBorder(),
                   ),
-                  validator: (value) => value!.isEmpty ? 'Please enter a name' : null,
+                  validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.pleaseEnterName : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _dosageController,
-                  decoration: const InputDecoration(
-                    labelText: 'Dosage (e.g. 1 pill)',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.dosage,
+                    border: const OutlineInputBorder(),
                   ),
-                  validator: (value) => value!.isEmpty ? 'Please enter dosage' : null,
+                  validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.pleaseEnterDosage : null,
                 ),
                 const SizedBox(height: 24),
                 Container(
@@ -205,9 +206,9 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                 TextFormField(
                   controller: _durationController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Duration (Days)',
-                    hintText: 'Leave empty for just today',
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.durationDays,
+                    hintText: AppLocalizations.of(context)!.optional,
                   ),
                   onChanged: (val) {
                     setState(() {
@@ -234,7 +235,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                 borderRadius: BorderRadius.zero,
               ),
             ),
-            child: const Text('Save Medicine', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+            child: Text(AppLocalizations.of(context)!.save, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
           ),
         ),
       ),

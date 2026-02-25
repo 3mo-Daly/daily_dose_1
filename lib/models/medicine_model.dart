@@ -90,6 +90,7 @@ class Medicine extends HiveObject {
     DateTime? hideBefore,
     DateTime? hideAfter,
     bool? isTaken,
+    Map<String, DateTime>? exactTakenTimes,
   }) {
     return Medicine(
       id: id ?? this.id,

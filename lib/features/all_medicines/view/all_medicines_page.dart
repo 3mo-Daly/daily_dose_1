@@ -7,6 +7,7 @@ import '../../profile/cubit/profile_cubit.dart';
 import '../../profile/cubit/profile_state.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../models/medicine_model.dart';
+import 'package:daily_dose/l10n/app_localizations.dart';
 
 class AllMedicinesPage extends StatelessWidget {
   const AllMedicinesPage({super.key});
@@ -14,7 +15,7 @@ class AllMedicinesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('All Medicines'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.allMedicinesTitle), centerTitle: true),
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, profileState) {
           if (profileState is ProfileLoaded &&
@@ -42,7 +43,7 @@ class AllMedicinesPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      "No medicines recorded",
+                      AppLocalizations.of(context)!.noMedicinesRecorded,
                       style: TextStyle(
                         color:
                             (Theme.of(context).textTheme.bodyLarge?.color ??
@@ -147,7 +148,7 @@ class AllMedicinesPage extends StatelessWidget {
               },
             );
           }
-          return const Center(child: Text('Select a profile first'));
+          return Center(child: Text(AppLocalizations.of(context)!.selectProfileFirst));
         },
       ),
     );
@@ -339,7 +340,7 @@ class _MedicineReportSheet extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Dosage: ${medicine.dosage}',
+                      '${AppLocalizations.of(context)!.dosage}: ${medicine.dosage}',
                       style: TextStyle(
                         fontSize: 16,
                         color:
@@ -359,7 +360,7 @@ class _MedicineReportSheet extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _ReportStatCard(
-                        title: 'Taken',
+                        title: AppLocalizations.of(context)!.taken,
                         value: takenCount.toString(),
                         icon: Icons.check_circle_rounded,
                         color: const Color(0xFF10B981), // Emerald
@@ -368,7 +369,7 @@ class _MedicineReportSheet extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _ReportStatCard(
-                        title: 'Missed',
+                        title: AppLocalizations.of(context)!.missed,
                         value: missedCount.toString(),
                         icon: Icons.cancel_rounded,
                         color: const Color(0xFFEF4444), // Red
@@ -394,7 +395,7 @@ class _MedicineReportSheet extends StatelessWidget {
                   child: Column(
                     children: [
                       _TimelineRow(
-                        title: 'Started',
+                        title: AppLocalizations.of(context)!.started,
                         value: onlyDateFormat.format(initialSchedule),
                         icon: Icons.play_circle_fill_rounded,
                       ),
@@ -403,10 +404,10 @@ class _MedicineReportSheet extends StatelessWidget {
                         child: Divider(),
                       ),
                       _TimelineRow(
-                        title: 'Ends',
+                        title: AppLocalizations.of(context)!.ends,
                         value: endDate != null
                             ? onlyDateFormat.format(endDate)
-                            : 'Ongoing indefinitely',
+                            : AppLocalizations.of(context)!.ongoingIndefinitely,
                         icon: Icons.stop_circle_rounded,
                       ),
                       const Padding(
@@ -414,12 +415,12 @@ class _MedicineReportSheet extends StatelessWidget {
                         child: Divider(),
                       ),
                       _TimelineRow(
-                        title: 'Frequency',
+                        title: AppLocalizations.of(context)!.frequency,
                         value:
                             medicine.isInterval &&
                                 medicine.intervalHours != null
-                            ? 'Every ${medicine.intervalHours} hours'
-                            : 'Daily at ${medicine.fixedTime != null ? timeFormat.format(DateTime(0, 1, 1, medicine.fixedTime!.hour, medicine.fixedTime!.minute)) : timeFormat.format(initialSchedule)}',
+                            ? AppLocalizations.of(context)!.everyXHours(medicine.intervalHours!)
+                            : AppLocalizations.of(context)!.dailyAt(medicine.fixedTime != null ? timeFormat.format(DateTime(0, 1, 1, medicine.fixedTime!.hour, medicine.fixedTime!.minute)) : timeFormat.format(initialSchedule)),
                         icon: Icons.repeat_rounded,
                       ),
                     ],
@@ -430,12 +431,12 @@ class _MedicineReportSheet extends StatelessWidget {
               const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
               // History List Title
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
                   child: Text(
-                    'Intake History',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    AppLocalizations.of(context)!.intakeHistory,
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -447,7 +448,7 @@ class _MedicineReportSheet extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 32.0),
                     child: Center(
                       child: Text(
-                        'No history recorded yet.',
+                        AppLocalizations.of(context)!.noHistoryRecorded,
                         style: TextStyle(
                           color:
                               (Theme.of(context).textTheme.bodyLarge?.color ??
@@ -464,7 +465,7 @@ class _MedicineReportSheet extends StatelessWidget {
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final historyDate = sortedHistory[index];
                     final exactTime =
-                        medicine.exactTakenTimes[historyDate
+                        medicine.exactTakenTimes?[historyDate
                             .toIso8601String()] ??
                         historyDate;
                     return ListTile(
@@ -489,6 +490,7 @@ class _MedicineReportSheet extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       trailing: Column(
+                        mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -506,7 +508,7 @@ class _MedicineReportSheet extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'Planned: ${timeFormat.format(historyDate)}',
+                            AppLocalizations.of(context)!.planned(timeFormat.format(historyDate)),
                             style: TextStyle(
                               color:
                                   (Theme.of(
@@ -524,8 +526,8 @@ class _MedicineReportSheet extends StatelessWidget {
                   }, childCount: sortedHistory.length),
                 ),
 
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 40),
+              SliverToBoxAdapter(
+                child: SizedBox(height: MediaQuery.of(context).padding.bottom + 40),
               ), // Bottom padding
             ],
           );

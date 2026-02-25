@@ -11,8 +11,11 @@ import '../../profile/cubit/profile_state.dart';
 import '../widgets/medicine_card.dart';
 import '../widgets/profile_header.dart';
 import '../../../core/theme/theme_cubit.dart';
+
 import '../../../core/theme/app_theme.dart';
 import '../../../models/medicine_model.dart';
+import '../../../core/locale/locale_cubit.dart';
+import 'package:daily_dose/l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -81,8 +84,8 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
           .then((_) => _loadMedicines());
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a profile first'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.pleaseSelectProfileFirst),
         ),
       );
     }
@@ -102,9 +105,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'Please select a profile or wait for medicines to load first.',
+            AppLocalizations.of(context)!.pleaseSelectProfileOrWait,
           ),
         ),
       );
@@ -119,8 +122,8 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       appBar: AppBar(
         title: Text(
           isSelectionMode
-              ? '${selectedCardKeys.length} Selected'
-              : 'The Daily Dose',
+              ? AppLocalizations.of(context)!.selectedCount(selectedCardKeys.length)
+              : AppLocalizations.of(context)!.appTitle,
         ),
         leading: isSelectionMode
             ? IconButton(
@@ -139,14 +142,14 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: const Text('Delete Selected Medicines?'),
+                          title: Text(AppLocalizations.of(context)!.deleteSelectedMedicines),
                           content: Text(
-                            'This will permanently delete ${selectedCardKeys.length} medicine(s).',
+                            AppLocalizations.of(context)!.deleteSelectedContent(selectedCardKeys.length),
                           ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context),
-                              child: const Text('Cancel'),
+                              child: Text(AppLocalizations.of(context)!.cancel),
                             ),
                             TextButton(
                               onPressed: () {
@@ -156,9 +159,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 _clearSelection();
                                 Navigator.pop(context);
                               },
-                              child: const Text(
-                                'Delete',
-                                style: TextStyle(color: Colors.red),
+                              child: Text(
+                                AppLocalizations.of(context)!.delete,
+                                style: const TextStyle(color: Colors.red),
                               ),
                             ),
                           ],
@@ -179,6 +182,15 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     final isDark =
                         Theme.of(context).brightness == Brightness.dark;
                     context.read<ThemeCubit>().toggleTheme(isDark);
+                  },
+                ),
+                IconButton(
+                  icon: Text(
+                    Localizations.localeOf(context).languageCode == 'ar' ? 'EN' : 'AR',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  onPressed: () {
+                    context.read<LocaleCubit>().toggleLocale();
                   },
                 ),
                 IconButton(
@@ -239,7 +251,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               ),
                             const SizedBox(height: 16),
                             Text(
-                              "No medicines for this day",
+                              AppLocalizations.of(context)!.noMedicines,
                               style: TextStyle(
                                 color: (Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black).withOpacity(0.7),
                                 fontSize: 16,
@@ -284,9 +296,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: const Text('Mark as Taken?'),
+                                  title: Text(AppLocalizations.of(context)!.markTakenTitle),
                                   content: Text(
-                                    'Are you sure you want to mark ${medicine.name} as taken?',
+                                    AppLocalizations.of(context)!.markTakenContent(medicine.name),
                                   ),
                                   actions: [
                                     TextButton(
@@ -300,9 +312,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                           medicine,
                                         );
                                       },
-                                      child: const Text(
-                                        'Confirm',
-                                        style: TextStyle(color: Colors.green),
+                                      child: Text(
+                                        AppLocalizations.of(context)!.confirm,
+                                        style: const TextStyle(color: Colors.green),
                                       ),
                                     ),
                                   ],
@@ -315,9 +327,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: const Text('Unmark as Taken?'),
+                                  title: Text(AppLocalizations.of(context)!.unmarkTakenTitle),
                                   content: Text(
-                                    'Are you sure you want to unmark ${medicine.name}?',
+                                    AppLocalizations.of(context)!.unmarkTakenContent(medicine.name),
                                   ),
                                   actions: [
                                     TextButton(
@@ -331,9 +343,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                           medicine,
                                         );
                                       },
-                                      child: const Text(
-                                        'Confirm',
-                                        style: TextStyle(color: Colors.orange),
+                                      child: Text(
+                                        AppLocalizations.of(context)!.confirm,
+                                        style: const TextStyle(color: Colors.orange),
                                       ),
                                     ),
                                   ],
@@ -347,7 +359,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   } else if (state is HomeError) {
                     return Center(child: Text('Error: ${state.message}'));
                   }
-                  return const Center(child: Text('Select a profile'));
+                  return Center(child: Text(AppLocalizations.of(context)!.selectProfile));
                 },
               ),
             ),
@@ -511,20 +523,20 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  'Deletion Options',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  AppLocalizations.of(context)!.deletionOptions,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
               ListTile(
                 leading: const Icon(Icons.delete_sweep, color: Colors.red),
-                title: const Text(
-                  'Delete All Medicines',
-                  style: TextStyle(color: Colors.red),
+                title: Text(
+                  AppLocalizations.of(context)!.deleteAllMedicines,
+                  style: const TextStyle(color: Colors.red),
                 ),
-                subtitle: const Text('Completely clear this profile.'),
+                subtitle: Text(AppLocalizations.of(context)!.completelyClearProfile),
                 onTap: () {
                   Navigator.pop(context); // close bottom sheet
                   _confirmDeleteAll(context, profileId);
@@ -532,9 +544,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
               ListTile(
                 leading: const Icon(Icons.auto_awesome_motion),
-                title: const Text('Delete Specific Medicine'),
-                subtitle: const Text(
-                  'Choose a medicine and modify its past/future occurrences.',
+                title: Text(AppLocalizations.of(context)!.deleteSpecificMedicine),
+                subtitle: Text(
+                  AppLocalizations.of(context)!.chooseMedicineModify,
                 ),
                 onTap: () {
                   Navigator.pop(context); // close bottom sheet
@@ -553,9 +565,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete All Medicines?'),
-        content: const Text(
-          'This will permanently delete all medicines for this profile.',
+        title: Text(AppLocalizations.of(context)!.deleteAllMedicinesTitle),
+        content: Text(
+          AppLocalizations.of(context)!.deleteAllMedicinesContent,
         ),
         actions: [
           TextButton(
@@ -586,7 +598,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     if (uniqueMedicines.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No active medicines found.')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.noActiveMedicines)),
       );
       return;
     }
@@ -606,11 +618,11 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
           builder: (context, scrollController) {
             return Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    'Select Medicine To Delete',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    AppLocalizations.of(context)!.selectMedicineToDelete,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Expanded(
@@ -662,7 +674,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  'Delete Repetitions for $medicineName',
+                  AppLocalizations.of(context)!.deleteRepetitionsFor(medicineName),
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -672,9 +684,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
               ListTile(
                 leading: const Icon(Icons.history),
-                title: const Text('Past Repetitions'),
-                subtitle: const Text(
-                  'Keep future reminders, but hide all past history.',
+                title: Text(AppLocalizations.of(context)!.pastRepetitions),
+                subtitle: Text(
+                  AppLocalizations.of(context)!.keepFutureHidePast,
                 ),
                 onTap: () {
                   context.read<HomeCubit>().updateMedicineScope(
@@ -686,9 +698,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
               ListTile(
                 leading: const Icon(Icons.update),
-                title: const Text('Future Repetitions'),
-                subtitle: const Text(
-                  'Keep past history, but stop all future reminders.',
+                title: Text(AppLocalizations.of(context)!.futureRepetitions),
+                subtitle: Text(
+                  AppLocalizations.of(context)!.keepPastStopFuture,
                 ),
                 onTap: () {
                   context.read<HomeCubit>().updateMedicineScope(
@@ -701,12 +713,12 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.delete_forever, color: Colors.red),
-                title: const Text(
-                  'All Repetitions',
-                  style: TextStyle(color: Colors.red),
+                title: Text(
+                  AppLocalizations.of(context)!.allRepetitions,
+                  style: const TextStyle(color: Colors.red),
                 ),
-                subtitle: const Text(
-                  'Completely delete this specific medicine entirely.',
+                subtitle: Text(
+                  AppLocalizations.of(context)!.completelyDeleteMedicine,
                 ),
                 onTap: () {
                   // Full deletion of just this medicine ID
@@ -801,9 +813,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ),
       child: Row(
         children: [
-          _buildTab(title: "Yesterday", isActive: selectedSegment == 0, value: 0),
-          _buildTab(title: "Today", isActive: selectedSegment == 1, value: 1),
-          _buildTab(title: "Tomorrow", isActive: selectedSegment == 2, value: 2),
+          _buildTab(title: AppLocalizations.of(context)!.yesterday, isActive: selectedSegment == 0, value: 0),
+          _buildTab(title: AppLocalizations.of(context)!.today, isActive: selectedSegment == 1, value: 1),
+          _buildTab(title: AppLocalizations.of(context)!.tomorrow, isActive: selectedSegment == 2, value: 2),
         ],
       ),
     );

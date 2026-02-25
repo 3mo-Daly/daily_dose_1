@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../../models/medicine_model.dart';
 import 'package:intl/intl.dart';
+import 'package:daily_dose/l10n/app_localizations.dart';
 
 class MedicineCard extends StatelessWidget {
   final Medicine medicine;
@@ -51,7 +52,7 @@ class MedicineCard extends StatelessWidget {
 
     if (isTaken) {
       // DONE
-      statusText = 'Taken';
+      statusText = AppLocalizations.of(context)!.taken;
       statusColor = isDarkMode ? Colors.grey[500]! : Colors.grey; // Muted color for taken
       statusIcon = Icons.check_circle;
       cardColor = isDarkMode
@@ -59,7 +60,7 @@ class MedicineCard extends StatelessWidget {
           : Colors.grey[300];
     } else if (isPassed) {
       // PASSED
-      statusText = 'Missed';
+      statusText = AppLocalizations.of(context)!.missed;
       statusColor = isDarkMode ? Colors.red[400]! : Colors.red;
       statusIcon = Icons.error_outline;
       cardColor = isDarkMode
@@ -67,7 +68,7 @@ class MedicineCard extends StatelessWidget {
           : Colors.red[50];
     } else if (isInProgress) {
       // IN PROGRESS
-      statusText = 'Time to take';
+      statusText = AppLocalizations.of(context)!.timeToTake;
       statusColor = isDarkMode ? Colors.orange[400]! : Colors.orange;
       statusIcon = Icons.access_time_filled;
       cardColor = isDarkMode
@@ -75,7 +76,7 @@ class MedicineCard extends StatelessWidget {
           : Colors.orange[50];
     } else {
       // FUTURE
-      statusText = 'Upcoming';
+      statusText = AppLocalizations.of(context)!.upcoming;
       statusColor = isDarkMode ? Colors.grey[400]! : Colors.grey;
       statusIcon = Icons.schedule;
       cardColor = isDarkMode ? Theme.of(context).colorScheme.surfaceContainerHighest : null; // Default surface color

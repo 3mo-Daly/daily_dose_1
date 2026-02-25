@@ -1,0 +1,168 @@
+{
+  "appTitle": "The Daily Dose",
+  "add": "Add",
+  "yesterday": "Yesterday",
+  "today": "Today",
+  "tomorrow": "Tomorrow",
+  "selectProfile": "Select a profile",
+  "noMedicines": "No medicines for this day",
+  "markTakenTitle": "Mark as Taken?",
+  "markTakenContent": "Are you sure you want to mark {medicineName} as taken?",
+  "@markTakenContent": {
+    "placeholders": {
+      "medicineName": {
+        "type": "String"
+      }
+    }
+  },
+  "unmarkTakenTitle": "Unmark as Taken?",
+  "unmarkTakenContent": "Are you sure you want to unmark {medicineName}?",
+  "@unmarkTakenContent": {
+    "placeholders": {
+      "medicineName": {
+        "type": "String"
+      }
+    }
+  },
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "taken": "Taken",
+  "missed": "Missed",
+  "timeToTake": "Time to take",
+  "upcoming": "Upcoming",
+  "allMedicines": "All Medicines",
+  "noMedicinesRecorded": "No medicines recorded",
+  "started": "Started",
+  "ends": "Ends",
+  "ongoingIndefinitely": "Ongoing indefinitely",
+  "frequency": "Frequency",
+  "everyXHours": "Every {hours} hours",
+  "@everyXHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "dailyAt": "Daily at {time}",
+  "@dailyAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "intakeHistory": "Intake History",
+  "noHistoryRecorded": "No history recorded yet.",
+  "planned": "Planned: {time}",
+  "@planned": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reportTitle": "Report",
+  "myPerformance": "My Performance",
+  "medicines": "Medicines",
+  "active": "Active",
+  "dosesTaken": "Doses Taken",
+  "adherence": "Adherence",
+  "addMedicineTitle": "Add Medicine",
+  "editMedicineTitle": "Edit Medicine",
+  "medicineName": "Medicine Name",
+  "dosage": "Dosage (e.g., 1 pill, 5ml)",
+  "startDate": "Start Date",
+  "durationDays": "Duration (Days)",
+  "optional": "Optional",
+  "intervalLabel": "Interval",
+  "fixedTimeLabel": "Fixed Time",
+  "intervalHours": "Interval Options",
+  "selectTime": "Select Time",
+  "selectImage": "Select Image",
+  "save": "Save",
+  "pleaseEnterName": "Please enter medicine name",
+  "pleaseEnterDosage": "Please enter dosage",
+  "pleaseSelectTime": "Please select a time for fixed daily medication",
+  "pleaseSelectInterval": "Please select interval hours",
+  "deleteProfileTitle": "Delete Profile?",
+  "deleteProfileContent": "Are you sure you want to delete {profileName}? All medicines associated with this profile will be permanently wiped.",
+  "@deleteProfileContent": {
+    "placeholders": {
+      "profileName": {
+        "type": "String"
+      }
+    }
+  },
+  "delete": "Delete",
+  "editProfile": "Edit Profile",
+  "addProfile": "Add Profile",
+  "name": "Name",
+  "manageProfile": "Manage Profile: {profileName}",
+  "@manageProfile": {
+    "placeholders": {
+      "profileName": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteSelectedMedicines": "Delete Selected Medicines?",
+  "deleteSelectedContent": "This will permanently delete {count} medicine(s).",
+  "@deleteSelectedContent": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pleaseSelectProfileFirst": "Please select a profile first",
+  "pleaseSelectProfileOrWait": "Please select a profile or wait for medicines to load first.",
+  "selectedCount": "{count} Selected",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dosageLabel": "Dosage: {dosage}",
+  "@dosageLabel": {
+    "placeholders": {
+      "dosage": {
+        "type": "String"
+      }
+    }
+  },
+  "endDate": "End Date",
+  "daily": "Daily",
+  "allMedicinesTitle": "All Medicines",
+  "selectProfileFirst": "Select a profile first",
+  "navHome": "Home",
+  "navAll": "All",
+  "navAdd": "Add",
+  "navDelete": "Delete",
+  "navReport": "Report",
+  "deletionOptions": "Deletion Options",
+  "deleteAllMedicines": "Delete All Medicines",
+  "completelyClearProfile": "Completely clear this profile.",
+  "deleteSpecificMedicine": "Delete Specific Medicine",
+  "chooseMedicineModify": "Choose a medicine and modify its past/future occurrences.",
+  "noActiveMedicines": "No active medicines found.",
+  "selectMedicineToDelete": "Select Medicine To Delete",
+  "deleteRepetitionsFor": "Delete Repetitions for {medicineName}",
+  "@deleteRepetitionsFor": {
+    "placeholders": {
+      "medicineName": {
+        "type": "String"
+      }
+    }
+  },
+  "pastRepetitions": "Past Repetitions",
+  "keepFutureHidePast": "Keep future reminders, but hide all past history.",
+  "futureRepetitions": "Future Repetitions",
+  "keepPastStopFuture": "Keep past history, but stop all future reminders.",
+  "allRepetitions": "All Repetitions",
+  "completelyDeleteMedicine": "Completely delete this specific medicine entirely.",
+  "deleteAllMedicinesTitle": "Delete All Medicines?",
+  "deleteAllMedicinesContent": "This will permanently delete all medicines for this profile."
+}

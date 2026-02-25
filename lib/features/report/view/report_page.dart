@@ -6,6 +6,7 @@ import '../../home/cubit/home_state.dart';
 import '../../profile/cubit/profile_cubit.dart';
 import '../../profile/cubit/profile_state.dart';
 import '../../../core/theme/app_theme.dart';
+import 'package:daily_dose/l10n/app_localizations.dart';
 
 class ReportPage extends StatelessWidget {
   const ReportPage({super.key});
@@ -92,7 +93,7 @@ class ReportPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 32),
                         Text(
-                          "My Performance",
+                          AppLocalizations.of(context)!.myPerformance,
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Theme.of(context).textTheme.bodyLarge?.color),
                         ),
                         const SizedBox(height: 16),
@@ -104,10 +105,10 @@ class ReportPage extends StatelessWidget {
                             childAspectRatio: 1.1,
                             physics: const BouncingScrollPhysics(),
                             children: [
-                              _StatCard(title: 'Medicines', value: totalMedicines.toString(), icon: Icons.medication_rounded, color: Theme.of(context).colorScheme.primary),
-                              _StatCard(title: 'Active', value: activeCount.toString(), icon: Icons.local_pharmacy_rounded, color: const Color(0xFFE57373)),
-                              _StatCard(title: 'Doses Taken', value: takenCount.toString(), icon: Icons.check_circle_rounded, color: const Color(0xFFFFB74D)),
-                              _StatCard(title: 'Adherence', value: 'N/A', icon: Icons.pie_chart_rounded, color: Theme.of(context).colorScheme.secondary),
+                              _StatCard(title: AppLocalizations.of(context)!.medicines, value: totalMedicines.toString(), icon: Icons.medication_rounded, color: Theme.of(context).colorScheme.primary),
+                              _StatCard(title: AppLocalizations.of(context)!.active, value: activeCount.toString(), icon: Icons.local_pharmacy_rounded, color: const Color(0xFFE57373)),
+                              _StatCard(title: AppLocalizations.of(context)!.dosesTaken, value: takenCount.toString(), icon: Icons.check_circle_rounded, color: const Color(0xFFFFB74D)),
+                              _StatCard(title: AppLocalizations.of(context)!.adherence, value: 'N/A', icon: Icons.pie_chart_rounded, color: Theme.of(context).colorScheme.secondary),
                             ],
                           ),
                         ),
@@ -118,7 +119,7 @@ class ReportPage extends StatelessWidget {
               },
             );
           }
-          return const Center(child: Text('Select a profile first'));
+          return Center(child: Text(AppLocalizations.of(context)!.selectProfileFirst));
         },
       ),
     );
