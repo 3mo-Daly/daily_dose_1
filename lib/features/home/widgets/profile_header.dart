@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../home/cubit/home_cubit.dart';
 import '../../profile/cubit/profile_cubit.dart';
 import '../../profile/cubit/profile_state.dart';
+import '../../../core/theme/app_theme.dart';
 import 'package:daily_dose/l10n/app_localizations.dart';
 
 class ProfileHeader extends StatelessWidget {
@@ -250,94 +251,101 @@ class _ProfileItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onSelect,
-            onLongPress: onLongPress,
-            borderRadius: BorderRadius.circular(30),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isSelected
-                          ? Theme.of(context).colorScheme.primary
-                          : Colors.transparent,
-                      width: 3,
+      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
+      child: InkWell(
+        onTap: onSelect,
+        onLongPress: onLongPress,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          decoration: isSelected
+              ? BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: Theme.of(context).brightness == Brightness.dark ? null : AppColors.softShadow,
+                )
+              : const BoxDecoration(color: Colors.transparent),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: profile.avatarPath != null
+                          ? DecorationImage(
+                              image: FileImage(File(profile.avatarPath!)),
+                              fit: BoxFit.cover)
+                          : null,
                     ),
-                    image: profile.avatarPath != null
-                        ? DecorationImage(
-                            image: FileImage(File(profile.avatarPath!)),
-                            fit: BoxFit.cover)
+                    child: profile.avatarPath == null
+                        ? Center(
+                            child: Text(
+                              profile.name.isNotEmpty
+                                  ? profile.name[0].toUpperCase()
+                                  : 'U',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          )
                         : null,
                   ),
-                  child: profile.avatarPath == null
-                      ? Center(
-                          child: Text(
-                            profile.name.isNotEmpty
-                                ? profile.name[0].toUpperCase()
-                                : 'U',
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        )
-                      : null,
-                ),
-                Builder(
-                  builder: (context) {
-                    context.watch<HomeCubit>();
-                    final count = context
-                        .read<HomeCubit>()
-                        .getUncompletedCountForProfile(profile.id);
-                    if (count > 0) {
-                      return Positioned(
-                        top: -2,
-                        right: -2,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                width: 2),
-                          ),
-                          child: Text(
-                            count > 99 ? '99+' : count.toString(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              height: 1.0,
+                  Builder(
+                    builder: (context) {
+                      context.watch<HomeCubit>();
+                      final count = context
+                          .read<HomeCubit>()
+                          .getUncompletedCountForProfile(profile.id);
+                      if (count > 0) {
+                        return Positioned(
+                          top: -2,
+                          right: -2,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  width: 2),
+                            ),
+                            child: Text(
+                              count > 99 ? '99+' : count.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                height: 1.0,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                profile.name,
+                style: TextStyle(
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.onSecondaryContainer
+                      : Theme.of(context).colorScheme.onSurface,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          Text(
-            profile.name,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
