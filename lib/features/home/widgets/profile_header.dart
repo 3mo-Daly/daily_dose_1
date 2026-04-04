@@ -17,7 +17,7 @@ class ProfileHeader extends StatelessWidget {
       builder: (context, state) {
         if (state is ProfileLoaded) {
           return SizedBox(
-            height: 145, // Increased height to prevent bottom overflow
+            height: 155, // Increased height to prevent bottom overflow with new sizes
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: state.profiles.length + 1, // +1 for Add button
@@ -218,10 +218,10 @@ class _AddProfileItem extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primaryContainer,
               ),
               child: Icon(Icons.add_rounded,
-                  color: Theme.of(context).colorScheme.primary, size: 28),
+                  color: Theme.of(context).colorScheme.primary, size: 30), // Slightly larger icon
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 12),
           Text(AppLocalizations.of(context)!.add,
               style: TextStyle(
                   color: Theme.of(context)
@@ -272,8 +272,8 @@ class _ProfileItem extends StatelessWidget {
                 clipBehavior: Clip.none,
                 children: [
                   Container(
-                    width: 50,
-                    height: 50,
+                    width: 60,
+                    height: 60,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: profile.avatarPath != null
@@ -289,7 +289,7 @@ class _ProfileItem extends StatelessWidget {
                                   ? profile.name[0].toUpperCase()
                                   : 'U',
                               style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 24,
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -333,7 +333,7 @@ class _ProfileItem extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 12),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(
