@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../home/view/home_page.dart';
-import '../../report/view/report_page.dart';
+import '../../more/view/more_page.dart';
 import '../../all_medicines/view/all_medicines_page.dart';
 import 'package:daily_dose/l10n/app_localizations.dart';
 
@@ -23,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           HomePage(key: _homePageKey),
           const AllMedicinesPage(),
-          const ReportPage(),
+          const MorePage(),
         ],
       ),
       bottomNavigationBar: NavigationBarTheme(
@@ -65,9 +65,9 @@ class _MainScreenState extends State<MainScreen> {
               label: AppLocalizations.of(context)!.navDelete,
             ),
             NavigationDestination(
-              icon: const Icon(Icons.bar_chart_outlined),
-              selectedIcon: Icon(Icons.bar_chart_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 28),
-              label: AppLocalizations.of(context)!.navReport,
+              icon: const Icon(Icons.more_horiz_outlined),
+              selectedIcon: Icon(Icons.more_horiz_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 28),
+              label: AppLocalizations.of(context)!.navMore,
             ),
           ],
           onDestinationSelected: (index) {

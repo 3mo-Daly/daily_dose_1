@@ -171,51 +171,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   },
                 ),
               ]
-            : [
-                IconButton(
-                  icon: Icon(
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Icons.light_mode
-                        : Icons.dark_mode,
-                  ),
-                  onPressed: () {
-                    final isDark =
-                        Theme.of(context).brightness == Brightness.dark;
-                    context.read<ThemeCubit>().toggleTheme(isDark);
-                  },
-                ),
-                IconButton(
-                  icon: Text(
-                    Localizations.localeOf(context).languageCode == 'ar' ? 'EN' : 'AR',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  onPressed: () {
-                    context.read<LocaleCubit>().toggleLocale();
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.calendar_today),
-                  onPressed: () {
-                    // Date picker or toggle
-                    showDatePicker(
-                      context: context,
-                      initialDate: selectedDate,
-                      firstDate: DateTime.now().subtract(
-                        const Duration(days: 365),
-                      ),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                    ).then((date) {
-                      if (date != null) {
-                        setState(() {
-                          selectedDate = date;
-                        });
-                        _clearSelection();
-                        _loadMedicines();
-                      }
-                    });
-                  },
-                ),
-              ],
+            : [],
       ),
       body: MultiBlocListener(
         listeners: [
@@ -805,7 +761,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -816,7 +772,69 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
           _buildTab(title: AppLocalizations.of(context)!.yesterday, isActive: selectedSegment == 0, value: 0),
           _buildTab(title: AppLocalizations.of(context)!.today, isActive: selectedSegment == 1, value: 1),
           _buildTab(title: AppLocalizations.of(context)!.tomorrow, isActive: selectedSegment == 2, value: 2),
+          _buildCalendarTab(isActive: selectedSegment == -1),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCalendarTab({required bool isActive}) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          showDatePicker(
+            context: context,
+            initialDate: selectedDate,
+            firstDate: DateTime.now().subtract(const Duration(days: 365)),
+            lastDate: DateTime.now().add(const Duration(days: 365)),
+          ).then((date) {
+            if (date != null) {
+              setState(() {
+                selectedDate = date;
+              });
+              _clearSelection();
+              _loadMedicines();
+            }
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: isActive
+              ? BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: Theme.of(context).brightness == Brightness.dark ? null : AppColors.softShadow,
+                )
+              : const BoxDecoration(color: Colors.transparent),
+          alignment: Alignment.center,
+          child: isActive
+              ? Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(
+                      Icons.calendar_today_rounded,
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      size: 24,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        selectedDate.day.toString(),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondaryContainer,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Icon(
+                  Icons.calendar_today_outlined,
+                  color: Theme.of(context).colorScheme.outline,
+                  size: 24,
+                ),
+        ),
       ),
     );
   }

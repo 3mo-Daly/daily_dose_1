@@ -87,5 +87,13 @@
   "allRepetitions": "جميع التكرارات",
   "completelyDeleteMedicine": "حذف هذا الدواء بالتحديد بالكامل.",
   "deleteAllMedicinesTitle": "حذف جميع الأدوية؟",
-  "deleteAllMedicinesContent": "سيؤدي هذا إلى حذف جميع الأدوية المرتبطة بهذا الملف الشخصي بشكل دائم."
+  "deleteAllMedicinesContent": "سيؤدي هذا إلى حذف جميع الأدوية المرتبطة بهذا الملف الشخصي بشكل دائم.",
+  "navMore": "المزيد",
+  "settings": "الإعدادات",
+  "theme": "المظهر",
+  "language": "اللغة",
+  "darkMode": "الوضع الداكن",
+  "lightMode": "الوضع الفاتح",
+  "english": "English",
+  "arabic": "العربية"
 }

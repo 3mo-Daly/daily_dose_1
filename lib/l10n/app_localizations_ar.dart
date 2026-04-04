@@ -301,4 +301,28 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get deleteAllMedicinesContent =>
       'سيؤدي هذا إلى حذف جميع الأدوية المرتبطة بهذا الملف الشخصي بشكل دائم.';
+
+  @override
+  String get navMore => 'المزيد';
+
+  @override
+  String get settings => 'الإعدادات';
+
+  @override
+  String get theme => 'المظهر';
+
+  @override
+  String get language => 'اللغة';
+
+  @override
+  String get darkMode => 'الوضع الداكن';
+
+  @override
+  String get lightMode => 'الوضع الفاتح';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get arabic => 'العربية';
 }

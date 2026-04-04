@@ -164,5 +164,13 @@
   "allRepetitions": "All Repetitions",
   "completelyDeleteMedicine": "Completely delete this specific medicine entirely.",
   "deleteAllMedicinesTitle": "Delete All Medicines?",
-  "deleteAllMedicinesContent": "This will permanently delete all medicines for this profile."
+  "deleteAllMedicinesContent": "This will permanently delete all medicines for this profile.",
+  "navMore": "More",
+  "settings": "Settings",
+  "theme": "Theme",
+  "language": "Language",
+  "darkMode": "Dark Mode",
+  "lightMode": "Light Mode",
+  "english": "English",
+  "arabic": "العربية"
 }

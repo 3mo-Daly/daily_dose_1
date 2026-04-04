@@ -303,4 +303,28 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get deleteAllMedicinesContent =>
       'This will permanently delete all medicines for this profile.';
+
+  @override
+  String get navMore => 'More';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get lightMode => 'Light Mode';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get arabic => 'العربية';
 }

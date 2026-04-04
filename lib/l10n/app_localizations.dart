@@ -631,6 +631,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This will permanently delete all medicines for this profile.'**
   String get deleteAllMedicinesContent;
+
+  /// No description provided for @navMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get navMore;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @lightMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mode'**
+  String get lightMode;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @arabic.
+  ///
+  /// In en, this message translates to:
+  /// **'العربية'**
+  String get arabic;
 }
 
 class _AppLocalizationsDelegate
