@@ -703,6 +703,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Let\'s try to improve our adherence this week! You can do it 💪'**
   String get improveAdherence;
+
+  /// No description provided for @textSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Size'**
+  String get textSize;
 }
 
 class _AppLocalizationsDelegate

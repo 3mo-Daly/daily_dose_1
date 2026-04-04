@@ -176,5 +176,6 @@
   "missedDoses": "Missed Doses",
   "excellentAdherence": "Excellent adherence! Keep up the great work 🤗",
   "goodAdherence": "Good adherence. You're doing well, but try not to miss doses! 👍",
-  "improveAdherence": "Let's try to improve our adherence this week! You can do it 💪"
+  "improveAdherence": "Let's try to improve our adherence this week! You can do it 💪",
+  "textSize": "Text Size"
 }

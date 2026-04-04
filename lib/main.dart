@@ -13,6 +13,7 @@ import 'package:daily_dose/l10n/app_localizations.dart';
 import 'core/theme/theme_cubit.dart';
 import 'core/theme/app_theme.dart';
 import 'core/locale/locale_cubit.dart';
+import 'core/settings/settings_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +37,9 @@ void main() async {
     profileBox.put('default', Profile(id: 'default', name: 'Me'));
   }
 
+  await Hive.openBox('settings');
+  var settingsBox = Hive.box('settings');
+
   final notificationService = NotificationService();
   await notificationService.init();
 
@@ -43,6 +47,7 @@ void main() async {
     MyApp(
       profileBox: profileBox,
       medicineBox: medicineBox,
+      settingsBox: settingsBox,
       notificationService: notificationService,
     ),
   );
@@ -51,12 +56,14 @@ void main() async {
 class MyApp extends StatelessWidget {
   final Box<Profile> profileBox;
   final Box<Medicine> medicineBox;
+  final Box settingsBox;
   final NotificationService notificationService;
 
   const MyApp({
     super.key,
     required this.profileBox,
     required this.medicineBox,
+    required this.settingsBox,
     required this.notificationService,
   });
 
@@ -77,27 +84,40 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(create: (_) => ThemeCubit()),
         BlocProvider(create: (_) => LocaleCubit()),
+        BlocProvider(create: (_) => SettingsCubit(settingsBox)),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
           return BlocBuilder<LocaleCubit, Locale>(
             builder: (context, locale) {
-              return MaterialApp(
-                title: 'The Daily Dose',
-                debugShowCheckedModeBanner: false,
-                locale: locale,
-                localizationsDelegates: [
-                  AppLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: AppLocalizations.supportedLocales,
-                theme:
-                    appTheme, // Using customized light AppTheme from specifications
-                darkTheme: darkAppTheme, // Using Modern Clinic Dark Theme
-                themeMode: themeMode,
-                home: const MainScreen(),
+              return BlocBuilder<SettingsCubit, double>(
+                builder: (context, textScale) {
+                  return MaterialApp(
+                    title: 'The Daily Dose',
+                    debugShowCheckedModeBanner: false,
+                    locale: locale,
+                    localizationsDelegates: [
+                      AppLocalizations.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate,
+                    ],
+                    supportedLocales: AppLocalizations.supportedLocales,
+                    theme:
+                        appTheme, // Using customized light AppTheme from specifications
+                    darkTheme: darkAppTheme, // Using Modern Clinic Dark Theme
+                    themeMode: themeMode,
+                    builder: (context, child) {
+                      return MediaQuery(
+                        data: MediaQuery.of(
+                          context,
+                        ).copyWith(textScaler: TextScaler.linear(textScale)),
+                        child: child!,
+                      );
+                    },
+                    home: const MainScreen(),
+                  );
+                },
               );
             },
           );

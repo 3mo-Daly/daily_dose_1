@@ -199,13 +199,27 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                                       if (e == -1) {
                                         return DropdownMenuItem(
                                           value: e,
-                                          child: Align(alignment: Alignment.centerRight, child: Text('Custom', style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 15))),
+                                          child: Align(
+                                            alignment: Alignment.centerRight,
+                                            child: FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              alignment: Alignment.centerRight,
+                                              child: Text('Custom', style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 15))
+                                            )
+                                          ),
                                         );
                                       }
                                       int timesPerDay = (24 / e).ceil();
                                       return DropdownMenuItem(
                                         value: e,
-                                        child: Align(alignment: Alignment.centerRight, child: Text('Every $e hours ($timesPerDay times a day)', style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 14))),
+                                        child: Align(
+                                          alignment: Alignment.centerRight,
+                                          child: FittedBox(
+                                            fit: BoxFit.scaleDown,
+                                            alignment: Alignment.centerRight,
+                                            child: Text('Every $e hours ($timesPerDay times a day)', style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 14))
+                                          )
+                                        ),
                                       );
                                     }).toList(),
                                     onChanged: (val) {

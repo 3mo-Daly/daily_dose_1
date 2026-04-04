@@ -342,4 +342,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get improveAdherence =>
       'Let\'s try to improve our adherence this week! You can do it 💪';
+
+  @override
+  String get textSize => 'Text Size';
 }

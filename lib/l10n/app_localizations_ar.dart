@@ -339,4 +339,7 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get improveAdherence =>
       'حاول تحسين التزامك هذا الأسبوع! يمكنك القيام بذلك 💪';
+
+  @override
+  String get textSize => 'حجم النص';
 }

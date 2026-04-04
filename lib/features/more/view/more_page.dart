@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:daily_dose/l10n/app_localizations.dart';
 import '../../../core/theme/theme_cubit.dart';
 import '../../../core/locale/locale_cubit.dart';
+import '../../../core/settings/settings_cubit.dart';
 import '../../report/view/report_page.dart';
 
 class MorePage extends StatelessWidget {
@@ -71,6 +72,43 @@ class MorePage extends StatelessWidget {
                       context.read<LocaleCubit>().toggleLocale();
                     }
                   },
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Text(
+              loc.textSize,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          BlocBuilder<SettingsCubit, double>(
+            builder: (context, textScale) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  children: [
+                    const Icon(Icons.text_decrease_rounded, size: 20),
+                    Expanded(
+                      child: Slider(
+                        value: textScale,
+                        min: 1.0,
+                        max: 1.4,
+                        divisions: 4,
+                        activeColor: Theme.of(context).colorScheme.primary,
+                        label: "${textScale}x",
+                        onChanged: (val) {
+                          context.read<SettingsCubit>().updateTextScale(val);
+                        },
+                      ),
+                    ),
+                    const Icon(Icons.text_increase_rounded, size: 30),
+                  ],
                 ),
               );
             },

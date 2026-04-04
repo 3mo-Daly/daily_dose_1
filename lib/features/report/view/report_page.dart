@@ -166,14 +166,16 @@ class ReportPage extends StatelessWidget {
                                   : null,
                             ),
                             const SizedBox(width: 14),
-                            Text(
-                              profile.name,
-                              style: TextStyle(
-                                color: Theme.of(
-                                  context,
-                                ).textTheme.bodyLarge?.color,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Text(
+                                profile.name,
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.bodyLarge?.color,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],

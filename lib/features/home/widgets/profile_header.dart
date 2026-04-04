@@ -17,7 +17,7 @@ class ProfileHeader extends StatelessWidget {
       builder: (context, state) {
         if (state is ProfileLoaded) {
           return SizedBox(
-            height: 120, // Increased height to prevent bottom overflow
+            height: 145, // Increased height to prevent bottom overflow
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: state.profiles.length + 1, // +1 for Add button
@@ -334,13 +334,18 @@ class _ProfileItem extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 6),
-              Text(
-                profile.name,
-                style: TextStyle(
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.onSecondaryContainer
-                      : Theme.of(context).colorScheme.onSurface,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  profile.name,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: isSelected
+                        ? Theme.of(context).colorScheme.onSecondaryContainer
+                        : Theme.of(context).colorScheme.onSurface,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  ),
                 ),
               ),
             ],
