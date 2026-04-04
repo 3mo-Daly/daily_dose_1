@@ -171,7 +171,6 @@ class _MedicineReportSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateFormat = DateFormat.yMMMd().add_jm();
     final onlyDateFormat = DateFormat.yMMMd();
     final timeFormat = DateFormat.jm();
 
@@ -204,10 +203,12 @@ class _MedicineReportSheet extends StatelessWidget {
         // Check bounds
         bool isHidden = false;
         if (medicine.hideBefore != null &&
-            current.isBefore(medicine.hideBefore!))
+            current.isBefore(medicine.hideBefore!)) {
           isHidden = true;
-        if (medicine.hideAfter != null && current.isAfter(medicine.hideAfter!))
+        }
+        if (medicine.hideAfter != null && current.isAfter(medicine.hideAfter!)) {
           isHidden = true;
+        }
 
         // Check explicit deleted occurrences
         bool isDeleted = medicine.deletedOccurrences.any(
@@ -244,11 +245,13 @@ class _MedicineReportSheet extends StatelessWidget {
         if (occurrenceTime.isBefore(calcEnd)) {
           bool isHidden = false;
           if (medicine.hideBefore != null &&
-              occurrenceTime.isBefore(medicine.hideBefore!))
+              occurrenceTime.isBefore(medicine.hideBefore!)) {
             isHidden = true;
+          }
           if (medicine.hideAfter != null &&
-              occurrenceTime.isAfter(medicine.hideAfter!))
+              occurrenceTime.isAfter(medicine.hideAfter!)) {
             isHidden = true;
+          }
 
           bool isDeleted = medicine.deletedOccurrences.any(
             (dt) =>

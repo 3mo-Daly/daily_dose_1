@@ -34,6 +34,9 @@ final ThemeData appTheme = ThemeData(
     onSurfaceVariant: AppColors.text.withOpacity(0.6),
     primaryContainer: const Color(0xFFE6F8F3),
   ),
+  appBarTheme: const AppBarTheme(
+    centerTitle: true,
+  ),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: AppColors.text),
     bodyMedium: TextStyle(color: AppColors.text),

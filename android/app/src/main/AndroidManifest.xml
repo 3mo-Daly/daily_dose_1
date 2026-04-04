@@ -19,7 +19,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:label="daily_dose"
+        android:label="3lagy"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         

@@ -24,11 +24,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
   final _nameController = TextEditingController();
   final _dosageController = TextEditingController();
   final _durationController = TextEditingController();
+  final _customIntervalController = TextEditingController();
   String? _imagePath;
   
   bool _isInterval = false;
   DateTime _startTime = DateTime.now();
   int? _intervalHours;
+  int? _dropdownSelection;
   int? _durationDays;
   
   @override
@@ -42,6 +44,14 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
       _isInterval = med.isInterval;
       _startTime = med.isInterval ? med.startTime : (med.fixedTime ?? med.startTime);
       _intervalHours = med.intervalHours;
+      if (_intervalHours != null) {
+        if ([4, 6, 8, 12, 24].contains(_intervalHours)) {
+          _dropdownSelection = _intervalHours;
+        } else {
+          _dropdownSelection = -1;
+          _customIntervalController.text = _intervalHours.toString();
+        }
+      }
       _durationDays = med.durationDays;
       if (_durationDays != null) {
         _durationController.text = _durationDays.toString();
@@ -54,6 +64,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
     _nameController.dispose();
     _dosageController.dispose();
     _durationController.dispose();
+    _customIntervalController.dispose();
     super.dispose();
   }
   
@@ -183,21 +194,98 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                                     isDense: true,
                                     icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).colorScheme.primary.withOpacity(0.8)),
                                     underline: const SizedBox(),
-                                    value: _intervalHours,
-                                    items: [4, 6, 8, 12, 24].map((e) {
+                                    value: _dropdownSelection,
+                                    items: [4, 6, 8, 12, 24, -1].map((e) {
+                                      if (e == -1) {
+                                        return DropdownMenuItem(
+                                          value: e,
+                                          child: Align(alignment: Alignment.centerRight, child: Text('Custom', style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 15))),
+                                        );
+                                      }
+                                      int timesPerDay = (24 / e).ceil();
                                       return DropdownMenuItem(
                                         value: e,
-                                        child: Align(alignment: Alignment.centerRight, child: Text('Every $e hours', style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 15))),
+                                        child: Align(alignment: Alignment.centerRight, child: Text('Every $e hours ($timesPerDay times a day)', style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 14))),
                                       );
                                     }).toList(),
-                                    onChanged: (val) => setState(() => _intervalHours = val),
+                                    onChanged: (val) {
+                                      setState(() {
+                                        _dropdownSelection = val;
+                                        if (val != -1) {
+                                          _intervalHours = val;
+                                        } else {
+                                          _intervalHours = int.tryParse(_customIntervalController.text);
+                                        }
+                                      });
+                                    },
                                     hint: Align(alignment: Alignment.centerRight, child: Text("Select", style: TextStyle(color: Theme.of(context).colorScheme.primary))),
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                        )
+                        ),
+                        if (_dropdownSelection == -1) ...[
+                          Divider(color: Theme.of(context).scaffoldBackgroundColor, height: 1, thickness: 1.5, indent: 16, endIndent: 16),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                            child: TextFormField(
+                              controller: _customIntervalController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Custom Interval (Hours)',
+                                border: const OutlineInputBorder(),
+                                hintText: 'Enter hours (max 24)',
+                              ),
+                              onChanged: (val) {
+                                int? parsed = int.tryParse(val);
+                                if (parsed != null && parsed > 24) {
+                                  _customIntervalController.text = '24';
+                                  _customIntervalController.selection = TextSelection.fromPosition(TextPosition(offset: _customIntervalController.text.length));
+                                  parsed = 24;
+                                }
+                                setState(() {
+                                  _intervalHours = parsed;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                        if (_intervalHours != null && _intervalHours! > 0) ...[
+                          Divider(color: Theme.of(context).scaffoldBackgroundColor, height: 1, thickness: 1.5, indent: 16, endIndent: 16),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Schedule Preview", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                                const SizedBox(height: 8),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: List.generate((24 / _intervalHours!).ceil(), (index) {
+                                    final doseTime = _startTime.add(Duration(hours: _intervalHours! * index));
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        'Dose ${index + 1}: ${DateFormat.jm().format(doseTime)}',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
+                                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ],
                     ],
                   ),

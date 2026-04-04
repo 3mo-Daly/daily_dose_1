@@ -93,7 +93,8 @@ class MyApp extends StatelessWidget {
                   GlobalCupertinoLocalizations.delegate,
                 ],
                 supportedLocales: AppLocalizations.supportedLocales,
-                theme: appTheme, // Using customized light AppTheme from specifications
+                theme:
+                    appTheme, // Using customized light AppTheme from specifications
                 darkTheme: darkAppTheme, // Using Modern Clinic Dark Theme
                 themeMode: themeMode,
                 home: const MainScreen(),

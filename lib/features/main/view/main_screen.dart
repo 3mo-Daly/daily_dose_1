@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../home/view/home_page.dart';
 import '../../report/view/report_page.dart';
 import '../../all_medicines/view/all_medicines_page.dart';
-import '../../../core/theme/app_theme.dart';
 import 'package:daily_dose/l10n/app_localizations.dart';
 
 class MainScreen extends StatefulWidget {
