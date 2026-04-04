@@ -327,4 +327,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get arabic => 'العربية';
+
+  @override
+  String get missedDoses => 'Missed Doses';
+
+  @override
+  String get excellentAdherence =>
+      'Excellent adherence! Keep up the great work 🤗';
+
+  @override
+  String get goodAdherence =>
+      'Good adherence. You\'re doing well, but try not to miss doses! 👍';
+
+  @override
+  String get improveAdherence =>
+      'Let\'s try to improve our adherence this week! You can do it 💪';
 }

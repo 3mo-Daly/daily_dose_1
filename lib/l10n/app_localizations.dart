@@ -679,6 +679,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'العربية'**
   String get arabic;
+
+  /// No description provided for @missedDoses.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed Doses'**
+  String get missedDoses;
+
+  /// No description provided for @excellentAdherence.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent adherence! Keep up the great work 🤗'**
+  String get excellentAdherence;
+
+  /// No description provided for @goodAdherence.
+  ///
+  /// In en, this message translates to:
+  /// **'Good adherence. You\'re doing well, but try not to miss doses! 👍'**
+  String get goodAdherence;
+
+  /// No description provided for @improveAdherence.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s try to improve our adherence this week! You can do it 💪'**
+  String get improveAdherence;
 }
 
 class _AppLocalizationsDelegate

@@ -325,4 +325,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get arabic => 'العربية';
+
+  @override
+  String get missedDoses => 'الجرعات الفائتة';
+
+  @override
+  String get excellentAdherence => 'التزام ممتاز! استمر في العمل الرائع 🤗';
+
+  @override
+  String get goodAdherence =>
+      'التزام جيد. أنت تبلي بلاءً حسناً، لكن حاول ألا تفوت الجرعات! 👍';
+
+  @override
+  String get improveAdherence =>
+      'حاول تحسين التزامك هذا الأسبوع! يمكنك القيام بذلك 💪';
 }

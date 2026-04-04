@@ -779,26 +779,25 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Widget _buildCalendarTab({required bool isActive}) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          showDatePicker(
-            context: context,
-            initialDate: selectedDate,
-            firstDate: DateTime.now().subtract(const Duration(days: 365)),
-            lastDate: DateTime.now().add(const Duration(days: 365)),
-          ).then((date) {
-            if (date != null) {
-              setState(() {
-                selectedDate = date;
-              });
-              _clearSelection();
-              _loadMedicines();
-            }
-          });
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+    return GestureDetector(
+      onTap: () {
+        showDatePicker(
+          context: context,
+          initialDate: selectedDate,
+          firstDate: DateTime.now().subtract(const Duration(days: 365)),
+          lastDate: DateTime.now().add(const Duration(days: 365)),
+        ).then((date) {
+          if (date != null) {
+            setState(() {
+              selectedDate = date;
+            });
+            _clearSelection();
+            _loadMedicines();
+          }
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: isActive
               ? BoxDecoration(
                   color: Theme.of(context).colorScheme.secondaryContainer,
@@ -835,7 +834,6 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   size: 24,
                 ),
         ),
-      ),
-    );
+      );
   }
 }
