@@ -50,7 +50,13 @@ class MorePage extends StatelessWidget {
                 value: isDark,
                 activeColor: Theme.of(context).colorScheme.primary,
                 onChanged: (bool value) {
-                  context.read<ThemeCubit>().toggleTheme(!value);
+                  // Defer the emit to avoid triggering a state change
+                  // mid-frame, which can crash if a bottom-sheet is open.
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (context.mounted) {
+                      context.read<ThemeCubit>().toggleTheme(!value);
+                    }
+                  });
                 },
               );
             },

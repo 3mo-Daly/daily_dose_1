@@ -25,6 +25,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
   final _dosageController = TextEditingController();
   final _durationController = TextEditingController();
   final _customIntervalController = TextEditingController();
+  final _noteController = TextEditingController();
   String? _imagePath;
   
   bool _isInterval = false;
@@ -56,6 +57,9 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
       if (_durationDays != null) {
         _durationController.text = _durationDays.toString();
       }
+      if (med.note != null) {
+        _noteController.text = med.note!;
+      }
     }
   }
 
@@ -65,6 +69,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
     _dosageController.dispose();
     _durationController.dispose();
     _customIntervalController.dispose();
+    _noteController.dispose();
     super.dispose();
   }
   
@@ -318,6 +323,17 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                     });
                   },
                 ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _noteController,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.noteLabel,
+                    hintText: AppLocalizations.of(context)!.noteHint,
+                    border: const OutlineInputBorder(),
+                    alignLabelWithHint: true,
+                  ),
+                ),
               ],
             ),
           ),
@@ -382,6 +398,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
            intervalHours: _isInterval ? _intervalHours : null,
            fixedTime: !_isInterval ? _startTime : null,
            durationDays: _durationDays,
+           note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
          );
        } else {
          context.read<AddMedicineCubit>().addMedicine(
@@ -395,6 +412,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
            intervalHours: _isInterval ? _intervalHours : null,
            fixedTime: !_isInterval ? _startTime : null,
            durationDays: _durationDays,
+           note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
          );
        }
     }

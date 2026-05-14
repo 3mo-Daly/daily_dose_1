@@ -10,11 +10,8 @@ import '../../profile/cubit/profile_cubit.dart';
 import '../../profile/cubit/profile_state.dart';
 import '../widgets/medicine_card.dart';
 import '../widgets/profile_header.dart';
-import '../../../core/theme/theme_cubit.dart';
-
 import '../../../core/theme/app_theme.dart';
 import '../../../models/medicine_model.dart';
-import '../../../core/locale/locale_cubit.dart';
 import 'package:daily_dose/l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
@@ -339,6 +336,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
+        final loc = AppLocalizations.of(context)!;
         final dateFormat = DateFormat.yMMMd().add_jm();
         final initialSchedule = medicine.isInterval
             ? medicine.startTime
@@ -391,30 +389,44 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 ),
                 Center(
                   child: Text(
-                    'Dosage: ${medicine.dosage}',
+                    loc.dosageLabel(medicine.dosage),
                     style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                 ),
+                if (medicine.note != null && medicine.note!.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Center(
+                    child: Text(
+                      medicine.note!,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 16),
                 const Divider(),
 
                 ListTile(
                   leading: const Icon(Icons.calendar_today),
-                  title: const Text('Start Date'),
+                  title: Text(loc.startDate),
                   subtitle: Text(dateFormat.format(initialSchedule)),
                 ),
                 ListTile(
                   leading: const Icon(Icons.event_busy),
-                  title: const Text('End Date'),
+                  title: Text(loc.endDate),
                   subtitle: Text(dateFormat.format(endDate)),
                 ),
                 ListTile(
                   leading: const Icon(Icons.repeat),
-                  title: const Text('Frequency'),
+                  title: Text(loc.frequency),
                   subtitle: Text(
                     medicine.isInterval && medicine.intervalHours != null
-                        ? 'Every ${medicine.intervalHours} hours'
-                        : 'Daily',
+                        ? loc.everyXHours(medicine.intervalHours!)
+                        : loc.daily,
                   ),
                 ),
 
@@ -447,11 +459,11 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       }
                     },
                     icon: const Icon(Icons.edit),
-                    label: const Padding(
-                      padding: EdgeInsets.all(12.0),
+                    label: Padding(
+                      padding: const EdgeInsets.all(12.0),
                       child: Text(
-                        'Edit Medicine',
-                        style: TextStyle(fontSize: 16),
+                        loc.editMedicineTitle,
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ),
                   ),

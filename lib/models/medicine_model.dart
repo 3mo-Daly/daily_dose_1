@@ -53,6 +53,9 @@ class Medicine extends HiveObject {
   @HiveField(14)
   final Map<String, DateTime> exactTakenTimes;
 
+  @HiveField(15)
+  final String? note;
+
   Medicine({
     required this.id,
     required this.profileId,
@@ -70,6 +73,7 @@ class Medicine extends HiveObject {
     this.hideAfter,
     this.isTaken = false,
     Map<String, DateTime>? exactTakenTimes,
+    this.note,
   })  : history = history ?? [],
         deletedOccurrences = deletedOccurrences ?? [],
         exactTakenTimes = exactTakenTimes ?? {};
@@ -91,6 +95,8 @@ class Medicine extends HiveObject {
     DateTime? hideAfter,
     bool? isTaken,
     Map<String, DateTime>? exactTakenTimes,
+    String? note,
+    bool clearNote = false,
   }) {
     return Medicine(
       id: id ?? this.id,
@@ -109,6 +115,7 @@ class Medicine extends HiveObject {
       hideAfter: hideAfter ?? this.hideAfter,
       isTaken: isTaken ?? this.isTaken,
       exactTakenTimes: exactTakenTimes ?? this.exactTakenTimes,
+      note: clearNote ? null : (note ?? this.note),
     );
   }
 }

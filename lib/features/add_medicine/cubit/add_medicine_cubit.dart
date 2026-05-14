@@ -26,6 +26,7 @@ class AddMedicineCubit extends Cubit<AddMedicineState> {
     int? intervalHours,
     DateTime? fixedTime,
     int? durationDays,
+    String? note,
   }) async {
     emit(AddMedicineLoading());
     try {
@@ -43,6 +44,7 @@ class AddMedicineCubit extends Cubit<AddMedicineState> {
         intervalHours: intervalHours,
         fixedTime: fixedTime,
         durationDays: effectiveDuration,
+        note: note,
       );
 
       await medicineBox.put(id, medicine);
@@ -111,6 +113,7 @@ class AddMedicineCubit extends Cubit<AddMedicineState> {
     int? intervalHours,
     DateTime? fixedTime,
     int? durationDays,
+    String? note,
   }) async {
     emit(AddMedicineLoading());
     try {
@@ -133,6 +136,8 @@ class AddMedicineCubit extends Cubit<AddMedicineState> {
         intervalHours: intervalHours,
         fixedTime: fixedTime,
         durationDays: effectiveDuration,
+        note: note,
+        clearNote: note == null || note.isEmpty,
       );
 
       await medicineBox.put(existingMedicine.key, updatedMedicine);

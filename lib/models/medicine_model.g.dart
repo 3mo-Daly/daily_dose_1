@@ -32,13 +32,14 @@ class MedicineAdapter extends TypeAdapter<Medicine> {
       hideBefore: fields[12] as DateTime?,
       hideAfter: fields[13] as DateTime?,
       exactTakenTimes: (fields[14] as Map?)?.cast<String, DateTime>(),
+      note: fields[15] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Medicine obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -68,7 +69,9 @@ class MedicineAdapter extends TypeAdapter<Medicine> {
       ..writeByte(13)
       ..write(obj.hideAfter)
       ..writeByte(14)
-      ..write(obj.exactTakenTimes);
+      ..write(obj.exactTakenTimes)
+      ..writeByte(15)
+      ..write(obj.note);
   }
 
   @override

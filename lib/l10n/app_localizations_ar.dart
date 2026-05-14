@@ -342,4 +342,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get textSize => 'حجم النص';
+
+  @override
+  String get noteLabel => 'ملاحظة';
+
+  @override
+  String get noteHint => 'أضف ملاحظة عن هذا الدواء...';
 }

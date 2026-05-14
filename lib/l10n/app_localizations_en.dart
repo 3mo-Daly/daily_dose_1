@@ -345,4 +345,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get textSize => 'Text Size';
+
+  @override
+  String get noteLabel => 'Note';
+
+  @override
+  String get noteHint => 'Add a note about this medicine...';
 }

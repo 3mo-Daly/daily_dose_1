@@ -709,6 +709,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Text Size'**
   String get textSize;
+
+  /// No description provided for @noteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get noteLabel;
+
+  /// No description provided for @noteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a note about this medicine...'**
+  String get noteHint;
 }
 
 class _AppLocalizationsDelegate

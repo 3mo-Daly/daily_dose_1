@@ -53,7 +53,7 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final Box<Profile> profileBox;
   final Box<Medicine> medicineBox;
   final Box settingsBox;
@@ -68,23 +68,35 @@ class MyApp extends StatelessWidget {
   });
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // A stable key keeps the Navigator alive across MaterialApp rebuilds
+  // (theme/locale changes). Without it, open bottom-sheets and dialogs
+  // hold a stale BuildContext and crash when the Navigator is recreated.
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (context) =>
-              ProfileCubit(profileBox: profileBox)..loadProfiles(),
+              ProfileCubit(profileBox: widget.profileBox)..loadProfiles(),
         ),
-        BlocProvider(create: (context) => HomeCubit(medicineBox: medicineBox)),
+        BlocProvider(
+            create: (context) =>
+                HomeCubit(medicineBox: widget.medicineBox)),
         BlocProvider(
           create: (context) => AddMedicineCubit(
-            medicineBox: medicineBox,
-            notificationService: notificationService,
+            medicineBox: widget.medicineBox,
+            notificationService: widget.notificationService,
           ),
         ),
-        BlocProvider(create: (_) => ThemeCubit()),
+        BlocProvider(create: (_) => ThemeCubit(widget.settingsBox)),
         BlocProvider(create: (_) => LocaleCubit()),
-        BlocProvider(create: (_) => SettingsCubit(settingsBox)),
+        BlocProvider(create: (_) => SettingsCubit(widget.settingsBox)),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
@@ -93,25 +105,25 @@ class MyApp extends StatelessWidget {
               return BlocBuilder<SettingsCubit, double>(
                 builder: (context, textScale) {
                   return MaterialApp(
+                    navigatorKey: _navigatorKey,
                     title: 'The Daily Dose',
                     debugShowCheckedModeBanner: false,
                     locale: locale,
-                    localizationsDelegates: [
+                    localizationsDelegates: const [
                       AppLocalizations.delegate,
                       GlobalMaterialLocalizations.delegate,
                       GlobalWidgetsLocalizations.delegate,
                       GlobalCupertinoLocalizations.delegate,
                     ],
                     supportedLocales: AppLocalizations.supportedLocales,
-                    theme:
-                        appTheme, // Using customized light AppTheme from specifications
-                    darkTheme: darkAppTheme, // Using Modern Clinic Dark Theme
+                    theme: appTheme,
+                    darkTheme: darkAppTheme,
                     themeMode: themeMode,
                     builder: (context, child) {
                       return MediaQuery(
-                        data: MediaQuery.of(
-                          context,
-                        ).copyWith(textScaler: TextScaler.linear(textScale)),
+                        data: MediaQuery.of(context).copyWith(
+                          textScaler: TextScaler.linear(textScale),
+                        ),
                         child: child!,
                       );
                     },
