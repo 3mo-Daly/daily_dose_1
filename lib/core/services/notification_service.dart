@@ -3,6 +3,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'dart:io';
+import 'dart:typed_data';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -28,12 +29,13 @@ class NotificationService {
     final LinuxInitializationSettings initializationSettingsLinux =
         LinuxInitializationSettings(defaultActionName: 'Open notification');
 
-    final InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsDarwin,
-      macOS: initializationSettingsDarwin,
-      linux: initializationSettingsLinux,
-    );
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsDarwin,
+          macOS: initializationSettingsDarwin,
+          linux: initializationSettingsLinux,
+        );
 
     await flutterLocalNotificationsPlugin.initialize(
       settings: initializationSettings,
@@ -45,7 +47,8 @@ class NotificationService {
     if (Platform.isAndroid) {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.requestNotificationsPermission();
     }
   }
@@ -61,17 +64,19 @@ class NotificationService {
       title: title,
       body: body,
       scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
-      notificationDetails: const NotificationDetails(
+      notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
-          'daily_dose_channel_2', // Changed ID to bypass cached Android channel settings
-          'Daily Dose Notifications v2',
+          'daily_dose_channel_3',
+          'Daily Dose Notifications v3',
           channelDescription: 'High priority reminders for your medicine',
           importance: Importance.max,
-          priority: Priority.max, // highest priority
-          playSound: true, // force sound
-          enableVibration: true, // force vibrate
-          fullScreenIntent: true, // allows it to display on lock screen/wake up
-          visibility: NotificationVisibility.public, // show on lock screen
+          priority: Priority.max,
+          playSound: true,
+          enableVibration: true,
+          // Double strong vibration: 600ms on, 200ms off, 600ms on
+          vibrationPattern: Int64List.fromList([0, 600, 200, 600]),
+          fullScreenIntent: true,
+          visibility: NotificationVisibility.public,
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -81,7 +86,7 @@ class NotificationService {
   Future<void> cancelNotification(int id) async {
     await flutterLocalNotificationsPlugin.cancel(id: id);
   }
-  
+
   Future<void> cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
   }

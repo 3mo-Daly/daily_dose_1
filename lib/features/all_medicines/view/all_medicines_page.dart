@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import '../../home/cubit/home_cubit.dart';
 import '../../profile/cubit/profile_cubit.dart';
@@ -18,137 +19,143 @@ class AllMedicinesPage extends StatelessWidget {
       appBar: AppBar(title: Text(AppLocalizations.of(context)!.allMedicinesTitle), centerTitle: true),
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, profileState) {
-          if (profileState is ProfileLoaded &&
-              profileState.selectedProfileId != null) {
-            final profileId = profileState.selectedProfileId!;
+          if (profileState is! ProfileLoaded ||
+              profileState.selectedProfileId == null) {
+            return Center(
+                child: Text(AppLocalizations.of(context)!.selectProfileFirst));
+          }
 
-            // Re-use HomeCubit for the Hive Box reference so it rebuilds on changes
-            final homeCubit = context.watch<HomeCubit>();
-            final allMedicines = homeCubit.medicineBox.values
-                .where((m) => m.profileId == profileId)
-                .toList();
+          final profileId = profileState.selectedProfileId!;
+          // ValueListenableBuilder subscribes directly to the Hive box so any
+          // mutation (add, delete, update) triggers an immediate rebuild —
+          // independent of whether HomeCubit happens to emit a new state.
+          final medicineBox = context.read<HomeCubit>().medicineBox;
 
-            // Sort by start time, newest to oldest
-            allMedicines.sort((a, b) => b.startTime.compareTo(a.startTime));
+          return ValueListenableBuilder<Box<Medicine>>(
+            valueListenable: medicineBox.listenable(),
+            builder: (context, box, _) {
+              final allMedicines = box.values
+                  .where((m) => m.profileId == profileId)
+                  .toList()
+                ..sort((a, b) => b.startTime.compareTo(a.startTime));
 
-            if (allMedicines.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.folder_open_rounded,
-                      size: 80,
-                      color: Theme.of(context).colorScheme.outlineVariant,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      AppLocalizations.of(context)!.noMedicinesRecorded,
-                      style: TextStyle(
-                        color:
-                            (Theme.of(context).textTheme.bodyLarge?.color ??
-                                    Colors.black)
-                                .withOpacity(0.7),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+              if (allMedicines.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.folder_open_rounded,
+                        size: 80,
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        AppLocalizations.of(context)!.noMedicinesRecorded,
+                        style: TextStyle(
+                          color: (Theme.of(context).textTheme.bodyLarge?.color ??
+                                  Colors.black)
+                              .withOpacity(0.7),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return ListView.builder(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                itemCount: allMedicines.length,
+                itemBuilder: (context, index) {
+                  final medicine = allMedicines[index];
+
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.outlineVariant,
                       ),
                     ),
-                  ],
-                ),
-              );
-            }
-
-            return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: allMedicines.length,
-              itemBuilder: (context, index) {
-                final medicine = allMedicines[index];
-
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.outlineVariant,
-                    ),
-                  ),
-                  color: Theme.of(context).colorScheme.surface,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(20),
-                    onTap: () => _showMedicineReportSheet(context, medicine),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.secondaryContainer.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(16),
-                              image: medicine.imagePath != null
-                                  ? DecorationImage(
-                                      image: FileImage(
-                                        File(medicine.imagePath!),
-                                      ),
-                                      fit: BoxFit.cover,
+                    color: Theme.of(context).colorScheme.surface,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () => _showMedicineReportSheet(context, medicine),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryContainer
+                                    .withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(16),
+                                image: medicine.imagePath != null
+                                    ? DecorationImage(
+                                        image: FileImage(
+                                            File(medicine.imagePath!)),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : null,
+                              ),
+                              child: medicine.imagePath == null
+                                  ? Icon(
+                                      Icons.medication_rounded,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      size: 32,
                                     )
                                   : null,
                             ),
-                            child: medicine.imagePath == null
-                                ? Icon(
-                                    Icons.medication_rounded,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    size: 32,
-                                  )
-                                : null,
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  medicine.name,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    medicine.name,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  medicine.dosage,
-                                  style: TextStyle(
-                                    color:
-                                        (Theme.of(
-                                                  context,
-                                                ).textTheme.bodyLarge?.color ??
-                                                Colors.black)
-                                            .withOpacity(0.6),
-                                    fontSize: 14,
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    medicine.dosage,
+                                    style: TextStyle(
+                                      color: (Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color ??
+                                              Colors.black)
+                                          .withOpacity(0.6),
+                                      fontSize: 14,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Icon(
-                            Icons.chevron_right_rounded,
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
-                        ],
+                            Icon(
+                              Icons.chevron_right_rounded,
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            );
-          }
-          return Center(child: Text(AppLocalizations.of(context)!.selectProfileFirst));
+                  );
+                },
+              );
+            },
+          );
         },
       ),
     );
@@ -343,7 +350,7 @@ class _MedicineReportSheet extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${AppLocalizations.of(context)!.dosage}: ${medicine.dosage}',
+                      AppLocalizations.of(context)!.dosageLabel(medicine.dosage),
                       style: TextStyle(
                         fontSize: 16,
                         color:

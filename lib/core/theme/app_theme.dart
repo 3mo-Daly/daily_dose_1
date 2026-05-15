@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static const Color primary = Color(0xFF10B981); // Modern Emerald
-  static const Color accent = Color(0xFF82CBAE);  // Soft Sage
+  static const Color accent = Color(0xFF82CBAE); // Soft Sage
   static const Color background = Color(0xFFF7F9F9); // Whisper Gray
   static const Color surface = Color(0xFFFFFFFF); // Pure White
   static const Color text = Color(0xFF1E293B); // Dark Slate
@@ -17,9 +17,20 @@ class AppColors {
   ];
 }
 
+const _smoothTransitions = PageTransitionsTheme(
+  builders: {
+    TargetPlatform.android: ZoomPageTransitionsBuilder(),
+    TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+    TargetPlatform.windows: ZoomPageTransitionsBuilder(),
+    TargetPlatform.linux: ZoomPageTransitionsBuilder(),
+    TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+  },
+);
+
 final ThemeData appTheme = ThemeData(
   useMaterial3: true,
   scaffoldBackgroundColor: AppColors.background,
+  pageTransitionsTheme: _smoothTransitions,
   colorScheme: ColorScheme.fromSeed(
     seedColor: AppColors.primary,
     primary: AppColors.primary,
@@ -34,9 +45,7 @@ final ThemeData appTheme = ThemeData(
     onSurfaceVariant: AppColors.text.withOpacity(0.6),
     primaryContainer: const Color(0xFFE6F8F3),
   ),
-  appBarTheme: const AppBarTheme(
-    centerTitle: true,
-  ),
+  appBarTheme: const AppBarTheme(centerTitle: true),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: AppColors.text),
     bodyMedium: TextStyle(color: AppColors.text),
@@ -64,15 +73,17 @@ final ThemeData appTheme = ThemeData(
 // Modern Clinic Dark Theme Palette
 class AppDarkColors {
   static const Color primary = Color(0xFF82CBAE); // Soft Sage
-  static const Color accent = Color(0xFF82CBAE);  // Soft Sage
+  static const Color accent = Color(0xFF82CBAE); // Soft Sage
   static const Color background = Color(0xFF121A19); // Dark Pine
   static const Color surface = Color(0xFF1E2A28); // Elevated Pine
   static const Color text = Color(0xFFFFFFFF); // Pure White as requested
 
   static const Color textSecondary = Color(0xFF8E9E9B); // Muted Grey-Green
   static const Color inputFill = Color(0xFF1A2523); // Input Field Background
-  
-  static const Color surfaceVariant = Color(0xFF2A3A37); // Seg Tab Bar Container / Add Profile Container
+
+  static const Color surfaceVariant = Color(
+    0xFF2A3A37,
+  ); // Seg Tab Bar Container / Add Profile Container
   static const Color onPrimaryActiveText = Color(0xFF121A19);
   static const Color inactiveTabText = Color(0xFFA5BDB9);
   static const Color navInactive = Color(0xFFB0C4C1);
@@ -83,6 +94,7 @@ class AppDarkColors {
 final ThemeData darkAppTheme = ThemeData(
   useMaterial3: true,
   scaffoldBackgroundColor: AppDarkColors.background,
+  pageTransitionsTheme: _smoothTransitions,
   colorScheme: ColorScheme.fromSeed(
     seedColor: AppDarkColors.primary,
     primary: AppDarkColors.primary,
@@ -108,7 +120,10 @@ final ThemeData darkAppTheme = ThemeData(
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: AppDarkColors.text),
     bodyMedium: TextStyle(color: AppDarkColors.text),
-    titleLarge: TextStyle(color: AppDarkColors.text, fontWeight: FontWeight.bold),
+    titleLarge: TextStyle(
+      color: AppDarkColors.text,
+      fontWeight: FontWeight.bold,
+    ),
   ),
   inputDecorationTheme: InputDecorationTheme(
     filled: true,

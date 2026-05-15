@@ -6,7 +6,7 @@ import 'core/services/notification_service.dart';
 import 'features/profile/cubit/profile_cubit.dart';
 import 'features/home/cubit/home_cubit.dart';
 import 'features/add_medicine/cubit/add_medicine_cubit.dart';
-import 'features/main/view/main_screen.dart';
+import 'features/splash/view/splash_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:daily_dose/l10n/app_localizations.dart';
@@ -86,8 +86,8 @@ class _MyAppState extends State<MyApp> {
               ProfileCubit(profileBox: widget.profileBox)..loadProfiles(),
         ),
         BlocProvider(
-            create: (context) =>
-                HomeCubit(medicineBox: widget.medicineBox)),
+          create: (context) => HomeCubit(medicineBox: widget.medicineBox),
+        ),
         BlocProvider(
           create: (context) => AddMedicineCubit(
             medicineBox: widget.medicineBox,
@@ -102,34 +102,34 @@ class _MyAppState extends State<MyApp> {
         builder: (context, themeMode) {
           return BlocBuilder<LocaleCubit, Locale>(
             builder: (context, locale) {
-              return BlocBuilder<SettingsCubit, double>(
-                builder: (context, textScale) {
-                  return MaterialApp(
-                    navigatorKey: _navigatorKey,
-                    title: 'The Daily Dose',
-                    debugShowCheckedModeBanner: false,
-                    locale: locale,
-                    localizationsDelegates: const [
-                      AppLocalizations.delegate,
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                      GlobalCupertinoLocalizations.delegate,
-                    ],
-                    supportedLocales: AppLocalizations.supportedLocales,
-                    theme: appTheme,
-                    darkTheme: darkAppTheme,
-                    themeMode: themeMode,
-                    builder: (context, child) {
+              return MaterialApp(
+                navigatorKey: _navigatorKey,
+                title: 'Elagy',
+                debugShowCheckedModeBanner: false,
+                locale: locale,
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: AppLocalizations.supportedLocales,
+                theme: appTheme,
+                darkTheme: darkAppTheme,
+                themeMode: themeMode,
+                builder: (context, child) {
+                  return BlocBuilder<SettingsCubit, double>(
+                    builder: (context, textScale) {
                       return MediaQuery(
-                        data: MediaQuery.of(context).copyWith(
-                          textScaler: TextScaler.linear(textScale),
-                        ),
+                        data: MediaQuery.of(
+                          context,
+                        ).copyWith(textScaler: TextScaler.linear(textScale)),
                         child: child!,
                       );
                     },
-                    home: const MainScreen(),
                   );
                 },
+                home: const SplashScreen(),
               );
             },
           );

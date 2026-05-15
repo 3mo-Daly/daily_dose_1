@@ -9,21 +9,24 @@ import '../../../core/theme/app_theme.dart';
 import 'package:daily_dose/l10n/app_localizations.dart';
 
 class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({super.key});
+  final double collapseProgress;
+
+  const ProfileHeader({super.key, required this.collapseProgress});
 
   @override
   Widget build(BuildContext context) {
+    final double height = 155 - 105 * collapseProgress; // 155 → 50
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         if (state is ProfileLoaded) {
           return SizedBox(
-            height: 155, // Increased height to prevent bottom overflow with new sizes
+            height: height,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: state.profiles.length + 1, // +1 for Add button
               itemBuilder: (context, index) {
                 if (index == state.profiles.length) {
-                  return const _AddProfileItem();
+                  return _AddProfileItem(collapseProgress: collapseProgress);
                 }
 
                 final profile = state.profiles[index];
@@ -32,6 +35,7 @@ class ProfileHeader extends StatelessWidget {
                 return _ProfileItem(
                   profile: profile,
                   isSelected: isSelected,
+                  collapseProgress: collapseProgress,
                   onSelect: () =>
                       context.read<ProfileCubit>().selectProfile(profile.id),
                   onLongPress: () => _ProfileHeaderActions.showEditDeleteOptions(
@@ -197,31 +201,45 @@ class _ProfileHeaderActions {
 }
 
 class _AddProfileItem extends StatelessWidget {
-  const _AddProfileItem();
+  final double collapseProgress;
+
+  const _AddProfileItem({required this.collapseProgress});
 
   @override
   Widget build(BuildContext context) {
+    final double avatarSize = 60 * (1 - collapseProgress);
+    final double avatarOpacity = 1 - collapseProgress;
+    final double gap = 12 * (1 - collapseProgress);
+    final double verticalPad = 8 - 6 * collapseProgress; // 8 → 2
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: verticalPad),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          InkWell(
-            onTap: () {
-              _ProfileHeaderActions.showAddProfileDialog(context);
-            },
-            borderRadius: BorderRadius.circular(30),
-            child: Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.primaryContainer,
+          Opacity(
+            opacity: avatarOpacity,
+            child: InkWell(
+              onTap: () {
+                _ProfileHeaderActions.showAddProfileDialog(context);
+              },
+              borderRadius: BorderRadius.circular(30),
+              child: Container(
+                width: avatarSize,
+                height: avatarSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                ),
+                child: avatarSize > 0
+                    ? Icon(Icons.add_rounded,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: avatarSize * 0.5)
+                    : null,
               ),
-              child: Icon(Icons.add_rounded,
-                  color: Theme.of(context).colorScheme.primary, size: 30), // Slightly larger icon
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: gap),
           Text(AppLocalizations.of(context)!.add,
               style: TextStyle(
                   color: Theme.of(context)
@@ -238,26 +256,35 @@ class _AddProfileItem extends StatelessWidget {
 class _ProfileItem extends StatelessWidget {
   final dynamic profile;
   final bool isSelected;
+  final double collapseProgress;
   final VoidCallback onSelect;
   final VoidCallback onLongPress;
 
   const _ProfileItem({
     required this.profile,
     required this.isSelected,
+    required this.collapseProgress,
     required this.onSelect,
     required this.onLongPress,
   });
 
   @override
   Widget build(BuildContext context) {
+    final double avatarSize = 60 * (1 - collapseProgress);
+    final double avatarOpacity = 1 - collapseProgress;
+    final double gap = 12 * (1 - collapseProgress);
+    final double verticalOuterPad = 8 - 6 * collapseProgress;  // 8 → 2
+    final double verticalInnerPad = 12 - 8 * collapseProgress; // 12 → 4
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
+      padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: verticalOuterPad),
       child: InkWell(
         onTap: onSelect,
         onLongPress: onLongPress,
         borderRadius: BorderRadius.circular(20),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          alignment: Alignment.center,
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: verticalInnerPad),
           decoration: isSelected
               ? BoxDecoration(
                   color: Theme.of(context).colorScheme.secondaryContainer,
@@ -267,73 +294,79 @@ class _ProfileItem extends StatelessWidget {
               : const BoxDecoration(color: Colors.transparent),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: profile.avatarPath != null
-                          ? DecorationImage(
-                              image: FileImage(File(profile.avatarPath!)),
-                              fit: BoxFit.cover)
+              Opacity(
+                opacity: avatarOpacity,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: avatarSize,
+                      height: avatarSize,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: profile.avatarPath != null && avatarSize > 0
+                            ? DecorationImage(
+                                image: FileImage(File(profile.avatarPath!)),
+                                fit: BoxFit.cover)
+                            : null,
+                      ),
+                      child: profile.avatarPath == null && avatarSize > 0
+                          ? Center(
+                              child: Text(
+                                profile.name.isNotEmpty
+                                    ? profile.name[0].toUpperCase()
+                                    : 'U',
+                                style: TextStyle(
+                                    fontSize: avatarSize * 0.4,
+                                    color: isSelected
+                                        ? Theme.of(context).colorScheme.onSecondaryContainer
+                                        : Theme.of(context).colorScheme.onSurface,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )
                           : null,
                     ),
-                    child: profile.avatarPath == null
-                        ? Center(
-                            child: Text(
-                              profile.name.isNotEmpty
-                                  ? profile.name[0].toUpperCase()
-                                  : 'U',
-                              style: TextStyle(
-                                  fontSize: 24,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        : null,
-                  ),
-                  Builder(
-                    builder: (context) {
-                      context.watch<HomeCubit>();
-                      final count = context
-                          .read<HomeCubit>()
-                          .getUncompletedCountForProfile(profile.id);
-                      if (count > 0) {
-                        return Positioned(
-                          top: -2,
-                          right: -2,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  width: 2),
-                            ),
-                            child: Text(
-                              count > 99 ? '99+' : count.toString(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                height: 1.0,
+                    Builder(
+                      builder: (context) {
+                        context.watch<HomeCubit>();
+                        final count = context
+                            .read<HomeCubit>()
+                            .getUncompletedCountForProfile(profile.id);
+                        if (count > 0 && avatarSize > 0) {
+                          return Positioned(
+                            top: -2,
+                            right: -2,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    color:
+                                        Theme.of(context).scaffoldBackgroundColor,
+                                    width: 2),
+                              ),
+                              child: Text(
+                                count > 99 ? '99+' : count.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  height: 1.0,
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  ),
-                ],
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: gap),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(

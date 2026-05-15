@@ -6,6 +6,14 @@ import '../../../core/locale/locale_cubit.dart';
 import '../../../core/settings/settings_cubit.dart';
 import '../../report/view/report_page.dart';
 
+String _textSizeLabel(double value) {
+  if (value <= 1.0) return 'Normal';
+  if (value <= 1.1) return 'Medium';
+  if (value <= 1.2) return 'Large';
+  if (value <= 1.3) return 'X-Large';
+  return 'Huge';
+}
+
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
 
@@ -107,7 +115,7 @@ class MorePage extends StatelessWidget {
                         max: 1.4,
                         divisions: 4,
                         activeColor: Theme.of(context).colorScheme.primary,
-                        label: "${textScale}x",
+                        label: _textSizeLabel(textScale),
                         onChanged: (val) {
                           context.read<SettingsCubit>().updateTextScale(val);
                         },
