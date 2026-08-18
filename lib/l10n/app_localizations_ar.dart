@@ -348,4 +348,35 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noteHint => 'أضف ملاحظة عن هذا الدواء...';
+
+  @override
+  String get startTimeLabel => 'وقت البدء';
+
+  @override
+  String get dailyRepeat => 'تكرار يومي';
+
+  @override
+  String get schedulePreview => 'معاينة الجدول';
+
+  @override
+  String get custom => 'مخصص';
+
+  @override
+  String get select => 'اختر';
+
+  @override
+  String get customIntervalHours => 'فترة مخصصة (بالساعات)';
+
+  @override
+  String get enterHoursMax24 => 'أدخل الساعات (24 كحد أقصى)';
+
+  @override
+  String everyXHoursYTimes(String hours, String times) {
+    return 'كل $hours ساعات ($times مرات في اليوم)';
+  }
+
+  @override
+  String dosePreview(String number, String time) {
+    return 'الجرعة $number: $time';
+  }
 }

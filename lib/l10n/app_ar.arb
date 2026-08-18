@@ -102,5 +102,14 @@
   "improveAdherence": "حاول تحسين التزامك هذا الأسبوع! يمكنك القيام بذلك 💪",
   "textSize": "حجم النص",
   "noteLabel": "ملاحظة",
-  "noteHint": "أضف ملاحظة عن هذا الدواء..."
+  "noteHint": "أضف ملاحظة عن هذا الدواء...",
+  "startTimeLabel": "وقت البدء",
+  "dailyRepeat": "تكرار يومي",
+  "schedulePreview": "معاينة الجدول",
+  "custom": "مخصص",
+  "select": "اختر",
+  "customIntervalHours": "فترة مخصصة (بالساعات)",
+  "enterHoursMax24": "أدخل الساعات (24 كحد أقصى)",
+  "everyXHoursYTimes": "كل {hours} ساعات ({times} مرات في اليوم)",
+  "dosePreview": "الجرعة {number}: {time}"
 }

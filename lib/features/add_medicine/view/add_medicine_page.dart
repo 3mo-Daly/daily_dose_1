@@ -75,8 +75,14 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
   
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    // Locale-aware formatters: in Arabic these render Arabic-Indic digits and
+    // ص/م (e.g. "٢:٠٠ ص"); in English they stay "2:00 AM".
+    final localeName = Localizations.localeOf(context).languageCode;
+    String fmtNum(num n) => NumberFormat.decimalPattern(localeName).format(n);
+    String fmtTime(DateTime t) => DateFormat.jm(localeName).format(t);
     return Scaffold(
-      appBar: AppBar(title: Text(widget.medicine != null ? AppLocalizations.of(context)!.editMedicineTitle : AppLocalizations.of(context)!.addMedicineTitle)),
+      appBar: AppBar(title: Text(widget.medicine != null ? loc.editMedicineTitle : loc.addMedicineTitle)),
       body: BlocListener<AddMedicineCubit, AddMedicineState>(
         listener: (context, state) {
           if (state is AddMedicineSuccess) {
@@ -150,9 +156,9 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Start Time', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
+                                  Text(loc.startTimeLabel, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
                                   const SizedBox(height: 4),
-                                  Text(DateFormat.jm().format(_startTime), style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 15)),
+                                  Text(fmtTime(_startTime), style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 15)),
                                 ],
                               ),
                               Icon(Icons.access_time_filled_rounded, color: Theme.of(context).colorScheme.primary.withOpacity(0.8), size: 22),
@@ -166,7 +172,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text("Daily Repeat", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                            Text(loc.dailyRepeat, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
                             Row(
                               children: [
                                 Switch(
@@ -190,7 +196,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Frequency", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                              Text(loc.frequency, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
                               Expanded(
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton<int>(
@@ -209,7 +215,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                                             child: FittedBox(
                                               fit: BoxFit.scaleDown,
                                               alignment: Alignment.centerRight,
-                                              child: Text('Custom', style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 15))
+                                              child: Text(loc.custom, style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 15))
                                             )
                                           ),
                                         );
@@ -222,7 +228,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                                           child: FittedBox(
                                             fit: BoxFit.scaleDown,
                                             alignment: Alignment.centerRight,
-                                            child: Text('Every $e hours ($timesPerDay times a day)', style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 14))
+                                            child: Text(loc.everyXHoursYTimes(fmtNum(e), fmtNum(timesPerDay)), style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary, fontSize: 14))
                                           )
                                         ),
                                       );
@@ -237,7 +243,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                                         }
                                       });
                                     },
-                                    hint: Align(alignment: Alignment.centerRight, child: Text("Select", style: TextStyle(color: Theme.of(context).colorScheme.primary))),
+                                    hint: Align(alignment: Alignment.centerRight, child: Text(loc.select, style: TextStyle(color: Theme.of(context).colorScheme.primary))),
                                   ),
                                 ),
                               ),
@@ -252,9 +258,9 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                               controller: _customIntervalController,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
-                                labelText: 'Custom Interval (Hours)',
+                                labelText: loc.customIntervalHours,
                                 border: const OutlineInputBorder(),
-                                hintText: 'Enter hours (max 24)',
+                                hintText: loc.enterHoursMax24,
                               ),
                               onChanged: (val) {
                                 int? parsed = int.tryParse(val);
@@ -277,7 +283,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Schedule Preview", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                                Text(loc.schedulePreview, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                                 const SizedBox(height: 8),
                                 Wrap(
                                   spacing: 8,
@@ -291,7 +297,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Text(
-                                        'Dose ${index + 1}: ${DateFormat.jm().format(doseTime)}',
+                                        loc.dosePreview(fmtNum(index + 1), fmtTime(doseTime)),
                                         style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w500,

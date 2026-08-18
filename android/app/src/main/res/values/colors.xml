@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="splash_background">#FF10B981</color>
+    <!-- Accent applied to the monochrome notification icon on lock screen / shade. -->
+    <color name="notification_color">#FF10B981</color>
 </resources>

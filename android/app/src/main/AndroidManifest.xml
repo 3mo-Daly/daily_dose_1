@@ -21,8 +21,9 @@
     <application
         android:label="Elagy"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
-        
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round">
+
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
             <intent-filter>
@@ -62,5 +63,18 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- Default notification icon + accent colour (status bar, lock screen,
+             and Wear OS smartwatches). The icon MUST be a monochrome, alpha-only
+             drawable; a full-colour mipmap renders as a solid white square.
+             flutter_local_notifications reads its icon from the Dart
+             AndroidInitializationSettings, so these tags additionally cover any
+             remote/FCM push path that relies on the manifest default. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/notification_color" />
     </application>
 </manifest>

@@ -4,6 +4,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui' show Color;
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -20,8 +21,10 @@ class NotificationService {
     final timeZoneInfo = await FlutterTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(timeZoneInfo.identifier));
 
+    // Monochrome, transparent status-bar/smartwatch icon (res/drawable-*/
+    // ic_notification.png). A full-colour mipmap would render as a white box.
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('ic_notification');
 
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings();
@@ -69,6 +72,10 @@ class NotificationService {
           'daily_dose_channel_3',
           'Daily Dose Notifications v3',
           channelDescription: 'High priority reminders for your medicine',
+          // Explicit per-notification icon + brand accent so the reminder that
+          // actually fires (incl. on Wear OS) uses the monochrome logo, tinted.
+          icon: 'ic_notification',
+          color: const Color(0xFF10B981),
           importance: Importance.max,
           priority: Priority.max,
           playSound: true,

@@ -178,8 +178,9 @@ class _MedicineReportSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onlyDateFormat = DateFormat.yMMMd();
-    final timeFormat = DateFormat.jm();
+    final localeName = Localizations.localeOf(context).languageCode;
+    final onlyDateFormat = DateFormat.yMMMd(localeName);
+    final timeFormat = DateFormat.jm(localeName);
 
     final initialSchedule = medicine.isInterval
         ? medicine.startTime

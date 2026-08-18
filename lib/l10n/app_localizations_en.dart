@@ -351,4 +351,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noteHint => 'Add a note about this medicine...';
+
+  @override
+  String get startTimeLabel => 'Start Time';
+
+  @override
+  String get dailyRepeat => 'Daily Repeat';
+
+  @override
+  String get schedulePreview => 'Schedule Preview';
+
+  @override
+  String get custom => 'Custom';
+
+  @override
+  String get select => 'Select';
+
+  @override
+  String get customIntervalHours => 'Custom Interval (Hours)';
+
+  @override
+  String get enterHoursMax24 => 'Enter hours (max 24)';
+
+  @override
+  String everyXHoursYTimes(String hours, String times) {
+    return 'Every $hours hours ($times times a day)';
+  }
+
+  @override
+  String dosePreview(String number, String time) {
+    return 'Dose $number: $time';
+  }
 }

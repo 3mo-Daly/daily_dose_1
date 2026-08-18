@@ -1,0 +1,17 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="120" fill="#10B981"/>
+  <!-- Capsule pill -->
+  <g transform="translate(256, 256) rotate(-30)">
+    <!-- Two-tone capsule body -->
+    <rect x="-150" y="-60" width="300" height="120" rx="60" fill="white"/>
+    <rect x="-150" y="-60" width="150" height="120" rx="60" fill="#82CBAE"/>
+    <!-- Center divider -->
+    <line x1="0" y1="-60" x2="0" y2="60" stroke="white" stroke-width="6" stroke-linecap="round"/>
+    <!-- Soft highlight -->
+    <rect x="-130" y="-50" width="60" height="20" rx="10" fill="white" opacity="0.35"/>
+  </g>
+  <!-- Tiny heart accent above capsule -->
+  <path d="M 256 130 q -18 -22 -36 -8 q -18 14 0 32 l 36 36 l 36 -36 q 18 -18 0 -32 q -18 -14 -36 8 z"
+        fill="white" opacity="0.95"/>
+</svg>

@@ -179,5 +179,34 @@
   "improveAdherence": "Let's try to improve our adherence this week! You can do it 💪",
   "textSize": "Text Size",
   "noteLabel": "Note",
-  "noteHint": "Add a note about this medicine..."
+  "noteHint": "Add a note about this medicine...",
+  "startTimeLabel": "Start Time",
+  "dailyRepeat": "Daily Repeat",
+  "schedulePreview": "Schedule Preview",
+  "custom": "Custom",
+  "select": "Select",
+  "customIntervalHours": "Custom Interval (Hours)",
+  "enterHoursMax24": "Enter hours (max 24)",
+  "everyXHoursYTimes": "Every {hours} hours ({times} times a day)",
+  "@everyXHoursYTimes": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "times": {
+        "type": "String"
+      }
+    }
+  },
+  "dosePreview": "Dose {number}: {time}",
+  "@dosePreview": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Elagy — Logo Concepts</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #F7F9F9;
+    color: #1E293B;
+    margin: 0;
+    padding: 40px 20px;
+  }
+  h1 { text-align: center; color: #10B981; margin-bottom: 8px; }
+  .sub { text-align: center; color: #64748B; margin-bottom: 40px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.06);
+    text-align: center;
+  }
+  .card img { width: 180px; height: 180px; border-radius: 36px; }
+  .card .small { display: flex; justify-content: center; gap: 12px; margin-top: 16px; }
+  .card .small img { width: 64px; height: 64px; border-radius: 14px; }
+  .card .tiny img { width: 32px; height: 32px; border-radius: 7px; }
+  .card h3 { margin: 16px 0 6px; color: #10B981; }
+  .card p { margin: 0; color: #64748B; font-size: 14px; line-height: 1.5; }
+  .dark { background: #121A19; }
+  .dark img { background: transparent; }
+</style>
+</head>
+<body>
+  <h1>Elagy — Logo Concepts</h1>
+  <p class="sub">Hover or open any SVG directly. Sizes shown: 180px, 64px, 32px.</p>
+
+  <div class="grid">
+    <div class="card">
+      <img src="1_caring_capsule.svg" alt="Caring Capsule">
+      <div class="small">
+        <img src="1_caring_capsule.svg">
+        <img src="1_caring_capsule.svg" style="width:32px;height:32px;border-radius:7px">
+      </div>
+      <h3>1. Caring Capsule</h3>
+      <p>Two-tone pill with a small white heart above — medicine + warmth. Most direct "this is a pill app" reading.</p>
+    </div>
+
+    <div class="card">
+      <img src="2_family_care.svg" alt="Family Care">
+      <div class="small">
+        <img src="2_family_care.svg">
+        <img src="2_family_care.svg" style="width:32px;height:32px;border-radius:7px">
+      </div>
+      <h3>2. Family Care</h3>
+      <p>Central pill with three figures around it — multi-profile front and center. Best fit for "for the whole family" positioning.</p>
+    </div>
+
+    <div class="card">
+      <img src="3_daily_sun.svg" alt="Daily Sun">
+      <div class="small">
+        <img src="3_daily_sun.svg">
+        <img src="3_daily_sun.svg" style="width:32px;height:32px;border-radius:7px">
+      </div>
+      <h3>3. Daily Sun</h3>
+      <p>Sun rays around a medical cross — daily ritual, warmth, and unmistakably healthcare. Strong senior-friendly read.</p>
+    </div>
+
+    <div class="card">
+      <img src="4_heart_pulse.svg" alt="Heart Pulse">
+      <div class="small">
+        <img src="4_heart_pulse.svg">
+        <img src="4_heart_pulse.svg" style="width:32px;height:32px;border-radius:7px">
+      </div>
+      <h3>4. Heart Pulse</h3>
+      <p>Heart with ECG line through it — health + care. The most emotionally warm of the set.</p>
+    </div>
+
+    <div class="card">
+      <img src="5_pill_clock.svg" alt="Pill Clock">
+      <div class="small">
+        <img src="5_pill_clock.svg">
+        <img src="5_pill_clock.svg" style="width:32px;height:32px;border-radius:7px">
+      </div>
+      <h3>5. Pill Clock</h3>
+      <p>Clock face whose hour hand is a capsule — emphasizes "on time" reminders, the core feature of the app.</p>
+    </div>
+
+    <div class="card">
+      <img src="6_elagy_monogram.svg" alt="Elagy E">
+      <div class="small">
+        <img src="6_elagy_monogram.svg">
+        <img src="6_elagy_monogram.svg" style="width:32px;height:32px;border-radius:7px">
+      </div>
+      <h3>6. "E" Monogram</h3>
+      <p>The letter E where the middle bar is a pill capsule. Strongest brand identity, scales well, looks distinct on a home screen.</p>
+    </div>
+  </div>
+</body>
+</html>

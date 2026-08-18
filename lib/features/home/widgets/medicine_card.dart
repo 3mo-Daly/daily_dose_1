@@ -24,79 +24,81 @@ class MedicineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Status Logic
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final loc = AppLocalizations.of(context)!;
+
+    // SINGLE SOURCE OF TRUTH — resolved fresh on every build from the live
+    // theme. Because there is no manual `isDark ? light : dark` branching, a
+    // theme toggle can never leave a card inverted or one step behind: the
+    // background and the text/icons always come from the same Theme snapshot.
+    final Color baseSurface = theme.cardTheme.color ?? cs.surface;
+    final Color onSurface = cs.onSurface;
+
+    // --- Time-based status ---------------------------------------------------
     final now = DateTime.now();
     final startTime = medicine.startTime;
     final isTaken = medicine.isTaken;
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    bool isFuture = now.isBefore(startTime);
-    bool isPassed = now.isAfter(startTime.add(const Duration(minutes: 30)));
-    bool isInProgress = !isFuture && !isPassed;
+    final bool isFuture = now.isBefore(startTime);
+    final bool isPassed = now.isAfter(startTime.add(const Duration(minutes: 30)));
+    final bool isInProgress = !isFuture && !isPassed;
+    final bool canTake = isInProgress || isPassed;
 
-    // Determine Status
-    // 0: Future, 1: InProgress, 2: Passed, 3: Done
-    // Logic:
-    // If isTaken -> Done.
-    // Else -> Time based.
-
-    // Update Status logic based on specific requirements
-    // Medicine is in progress if it's within 30 minutes BEFORE the start time, up until 30 minutes after.
-    // The user wants it to appear 30 mins before, or if it was missed.
-    bool canTake = isInProgress || isPassed;
-
-    Color? cardColor;
-    Color statusColor;
-    IconData statusIcon;
-    String statusText;
-
+    // One accent hue per status, each legible on BOTH the light and dark card
+    // surface, so no brightness-specific colour picking is needed.
+    final Color accent;
+    final IconData statusIcon;
+    final String statusText;
     if (isTaken) {
-      // DONE
-      statusText = AppLocalizations.of(context)!.taken;
-      statusColor = isDarkMode ? Colors.grey[500]! : Colors.grey; // Muted color for taken
+      accent = cs.onSurfaceVariant;
       statusIcon = Icons.check_circle;
-      cardColor = isDarkMode
-          ? Colors.grey[800]?.withValues(alpha: 0.5)
-          : Colors.grey[300];
+      statusText = loc.taken;
     } else if (isPassed) {
-      // PASSED
-      statusText = AppLocalizations.of(context)!.missed;
-      statusColor = isDarkMode ? Colors.red[400]! : Colors.red;
+      accent = cs.error; // theme-aware red
       statusIcon = Icons.error_outline;
-      cardColor = isDarkMode
-          ? Colors.red[900]?.withValues(alpha: 0.6)
-          : Colors.red[50];
+      statusText = loc.missed;
     } else if (isInProgress) {
-      // IN PROGRESS
-      statusText = AppLocalizations.of(context)!.timeToTake;
-      statusColor = isDarkMode ? Colors.orange[400]! : Colors.orange;
+      accent = const Color(0xFFF59E0B); // amber "due now" — reads on both modes
       statusIcon = Icons.access_time_filled;
-      cardColor = isDarkMode
-          ? Colors.orange[900]?.withValues(alpha: 0.6)
-          : Colors.orange[50];
+      statusText = loc.timeToTake;
     } else {
-      // FUTURE
-      statusText = AppLocalizations.of(context)!.upcoming;
-      statusColor = isDarkMode ? Colors.grey[400]! : Colors.grey;
+      accent = cs.onSurfaceVariant;
       statusIcon = Icons.schedule;
-      cardColor = isDarkMode ? Theme.of(context).colorScheme.surfaceContainerHighest : null; // Default surface color
+      statusText = loc.upcoming;
     }
+
+    // Background = the theme surface, optionally given a faint status tint by
+    // blending the accent OVER it. alphaBlend keeps it opaque and works the
+    // same in light and dark because the base is already theme-correct.
+    final Color cardColor;
+    if (isSelected && !isTaken) {
+      cardColor = cs.primaryContainer;
+    } else if (isPassed && !isTaken) {
+      cardColor = Color.alphaBlend(accent.withValues(alpha: 0.10), baseSurface);
+    } else if (isInProgress && !isTaken) {
+      cardColor = Color.alphaBlend(accent.withValues(alpha: 0.12), baseSurface);
+    } else {
+      cardColor = baseSurface;
+    }
+
+    final Color titleColor =
+        isTaken ? onSurface.withValues(alpha: 0.5) : onSurface;
+    final Color subtitleColor = isTaken
+        ? cs.onSurfaceVariant.withValues(alpha: 0.7)
+        : cs.onSurfaceVariant;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: isSelected && !isTaken
-          ? Theme.of(context).colorScheme.primaryContainer
-          : cardColor,
-      // Add a visual dashed border or opacity if taken, or a solid border if selected
+      color: cardColor,
       elevation: isTaken ? 0 : (isSelected ? 6 : 3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
           color: isSelected
-              ? Theme.of(context).colorScheme.primary
-              : (isTaken ? Colors.grey.withOpacity(0.5) : Colors.transparent),
+              ? cs.primary
+              : (isTaken ? cs.outlineVariant : Colors.transparent),
           width: isSelected ? 2 : 1,
-          style: isTaken && !isSelected ? BorderStyle.solid : BorderStyle.solid,
         ),
       ),
       child: InkWell(
@@ -104,44 +106,43 @@ class MedicineCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Opacity(
-          opacity: isTaken
-              ? 0.6
-              : 1.0, // Make the whole card look disabled/done
+          opacity: isTaken ? 0.65 : 1.0, // "done" cards read as disabled
           child: ListTile(
             leading: medicine.imagePath != null
                 ? CircleAvatar(
                     backgroundImage: FileImage(File(medicine.imagePath!)),
                   )
                 : CircleAvatar(
-                    backgroundColor: statusColor.withValues(alpha: 0.2),
-                    child: Icon(Icons.medication_rounded, color: statusColor),
+                    backgroundColor: accent.withValues(alpha: 0.15),
+                    child: Icon(Icons.medication_rounded, color: accent),
                   ),
             title: Text(
               medicine.name,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
+                color: titleColor,
                 decoration: isTaken ? TextDecoration.lineThrough : null,
-                color: isTaken ? Colors.grey : null,
               ),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${medicine.dosage} • ${_formatTime()}',
+                  '${medicine.dosage} • ${_formatTime(context)}',
                   style: TextStyle(
+                    color: subtitleColor,
                     decoration: isTaken ? TextDecoration.lineThrough : null,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(statusIcon, size: 14, color: statusColor),
+                    Icon(statusIcon, size: 14, color: accent),
                     const SizedBox(width: 4),
                     Text(
                       statusText,
                       style: TextStyle(
-                        color: statusColor,
+                        color: accent,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -150,30 +151,29 @@ class MedicineCard extends StatelessWidget {
                 ),
               ],
             ),
-            // Only show the trailing checkmark button if it's NOT taken, AND it can be taken (isInProgress or isPassed)
+            // Take button only while actionable; check button once taken.
             trailing: (!isTaken && canTake)
                 ? IconButton(
                     icon: const Icon(Icons.circle_outlined),
                     onPressed: onTaken,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: cs.primary,
                   )
                 : (isTaken
                       ? IconButton(
-                          icon: const Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
-                          ),
+                          icon: Icon(Icons.check_circle, color: cs.primary),
                           onPressed: onUncheck,
                         )
-                      : null), // Show nothing if it's in the future and not taken
+                      : null),
           ),
         ),
       ),
     );
   }
 
-  String _formatTime() {
-    // Use the specific instance time (which HomeCubit has updated for this occurrence)
-    return DateFormat.jm().format(medicine.startTime);
+  String _formatTime(BuildContext context) {
+    // Use the specific instance time (which HomeCubit has updated for this
+    // occurrence). Locale-aware so Arabic renders Arabic-Indic digits and ص/م.
+    final localeName = Localizations.localeOf(context).languageCode;
+    return DateFormat.jm(localeName).format(medicine.startTime);
   }
 }

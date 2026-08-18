@@ -46,6 +46,14 @@ final ThemeData appTheme = ThemeData(
     primaryContainer: const Color(0xFFE6F8F3),
   ),
   appBarTheme: const AppBarTheme(centerTitle: true),
+  // Single source of truth for card surfaces. surfaceTintColor: transparent
+  // keeps the color exact at any elevation (M3 would otherwise tint it).
+  cardTheme: const CardThemeData(
+    color: AppColors.surface,
+    surfaceTintColor: Colors.transparent,
+    elevation: 3,
+    margin: EdgeInsets.zero,
+  ),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: AppColors.text),
     bodyMedium: TextStyle(color: AppColors.text),
@@ -116,6 +124,13 @@ final ThemeData darkAppTheme = ThemeData(
     foregroundColor: AppDarkColors.text,
     elevation: 0,
     centerTitle: true,
+  ),
+  // Elevated pine surface — distinct from the darker scaffold background.
+  cardTheme: const CardThemeData(
+    color: AppDarkColors.surface,
+    surfaceTintColor: Colors.transparent,
+    elevation: 3,
+    margin: EdgeInsets.zero,
   ),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: AppDarkColors.text),

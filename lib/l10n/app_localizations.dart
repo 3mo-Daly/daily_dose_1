@@ -721,6 +721,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add a note about this medicine...'**
   String get noteHint;
+
+  /// No description provided for @startTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Time'**
+  String get startTimeLabel;
+
+  /// No description provided for @dailyRepeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Repeat'**
+  String get dailyRepeat;
+
+  /// No description provided for @schedulePreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule Preview'**
+  String get schedulePreview;
+
+  /// No description provided for @custom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get custom;
+
+  /// No description provided for @select.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get select;
+
+  /// No description provided for @customIntervalHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Interval (Hours)'**
+  String get customIntervalHours;
+
+  /// No description provided for @enterHoursMax24.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter hours (max 24)'**
+  String get enterHoursMax24;
+
+  /// No description provided for @everyXHoursYTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {hours} hours ({times} times a day)'**
+  String everyXHoursYTimes(String hours, String times);
+
+  /// No description provided for @dosePreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Dose {number}: {time}'**
+  String dosePreview(String number, String time);
 }
 
 class _AppLocalizationsDelegate

@@ -1,0 +1,21 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="120" fill="#F7F9F9"/>
+  <!-- Central pill (vertical) -->
+  <g transform="translate(256, 256)">
+    <rect x="-45" y="-110" width="90" height="220" rx="45" fill="#10B981"/>
+    <line x1="-45" y1="0" x2="45" y2="0" stroke="white" stroke-width="5" stroke-linecap="round"/>
+    <!-- Three profile dots around pill -->
+    <!-- top-left figure -->
+    <circle cx="-130" cy="-80" r="34" fill="#82CBAE"/>
+    <circle cx="-130" cy="-95" r="14" fill="white"/>
+    <path d="M -154 -65 q 24 -22 48 0 v 14 h -48 z" fill="white"/>
+    <!-- top-right figure -->
+    <circle cx="130" cy="-80" r="34" fill="#82CBAE"/>
+    <circle cx="130" cy="-95" r="14" fill="white"/>
+    <path d="M 106 -65 q 24 -22 48 0 v 14 h -48 z" fill="white"/>
+    <!-- bottom figure -->
+    <circle cx="0" cy="160" r="34" fill="#82CBAE"/>
+    <circle cx="0" cy="145" r="14" fill="white"/>
+    <path d="M -24 175 q 24 -22 48 0 v 14 h -48 z" fill="white"/>
+  </g>
+</svg>

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -21,24 +22,29 @@ class ThemeCubit extends Cubit<ThemeMode> {
   }
 
   void toggleTheme(bool isCurrentlyDark) {
-    final newMode = isCurrentlyDark ? ThemeMode.light : ThemeMode.dark;
-    _settingsBox.put(_themeKey, newMode == ThemeMode.dark ? 'dark' : 'light');
-    emit(newMode);
+    setTheme(isCurrentlyDark ? ThemeMode.light : ThemeMode.dark);
   }
 
   void setTheme(ThemeMode mode) {
-    final String key;
+    // Skip no-op toggles so we never emit an identical state (which would
+    // otherwise trigger a redundant MaterialApp rebuild).
+    if (mode == state) return;
+
+    // Repaint the UI first so the switch feels instant, then persist. Box.put
+    // returns a Future (the disk flush is async); we deliberately fire it and
+    // forget so the theme change is never gated on disk I/O on the UI thread.
+    emit(mode);
+    unawaited(_settingsBox.put(_themeKey, _encode(mode)));
+  }
+
+  static String _encode(ThemeMode mode) {
     switch (mode) {
       case ThemeMode.dark:
-        key = 'dark';
-        break;
+        return 'dark';
       case ThemeMode.light:
-        key = 'light';
-        break;
-      default:
-        key = 'system';
+        return 'light';
+      case ThemeMode.system:
+        return 'system';
     }
-    _settingsBox.put(_themeKey, key);
-    emit(mode);
   }
 }

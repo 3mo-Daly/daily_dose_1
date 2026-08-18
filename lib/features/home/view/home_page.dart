@@ -345,7 +345,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(ctx)!.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -372,7 +372,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(ctx)!.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -404,7 +404,8 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ),
       builder: (context) {
         final loc = AppLocalizations.of(context)!;
-        final dateFormat = DateFormat.yMMMd().add_jm();
+        final localeName = Localizations.localeOf(context).languageCode;
+        final dateFormat = DateFormat.yMMMd(localeName).add_jm();
         final initialSchedule = medicine.isInterval
             ? medicine.startTime
             : (medicine.fixedTime ?? medicine.startTime);
@@ -599,7 +600,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(ctx)!.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -607,8 +608,8 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
               Navigator.of(ctx).pop();
               cubit.deleteAllMedicines(profileId);
             },
-            child: const Text('Delete',
-                style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(ctx)!.delete,
+                style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),

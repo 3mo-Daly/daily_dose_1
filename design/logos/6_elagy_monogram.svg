@@ -1,0 +1,16 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="120" fill="#10B981"/>
+  <!-- "E" shape built from three bars; middle bar is a pill capsule -->
+  <!-- Vertical spine -->
+  <rect x="130" y="120" width="50" height="272" rx="14" fill="white"/>
+  <!-- Top bar -->
+  <rect x="130" y="120" width="220" height="50" rx="14" fill="white"/>
+  <!-- Bottom bar -->
+  <rect x="130" y="342" width="220" height="50" rx="14" fill="white"/>
+  <!-- Middle bar = capsule pill (two-tone) -->
+  <g>
+    <rect x="130" y="231" width="200" height="50" rx="25" fill="white"/>
+    <rect x="130" y="231" width="100" height="50" rx="25" fill="#82CBAE"/>
+    <line x1="230" y1="231" x2="230" y2="281" stroke="white" stroke-width="4"/>
+  </g>
+</svg>
